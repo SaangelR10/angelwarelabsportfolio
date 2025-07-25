@@ -396,26 +396,6 @@ const Services = () => {
 
               {/* Hover Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-accent-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              
-              {/* Mobile Touch Overlay */}
-              <div 
-                className="absolute bottom-4 right-4 w-32 h-12 bg-primary-500/20 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 sm:hidden"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  console.log('MOBILE OVERLAY CLICKED!', service.title)
-                  handleServiceClick(service)
-                }}
-                onTouchStart={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  console.log('MOBILE OVERLAY TOUCH!', service.title)
-                  handleServiceClick(service)
-                }}
-                style={{ zIndex: 20 }}
-              >
-                <span className="text-xs font-medium text-primary-400">Saber más</span>
-              </div>
             </motion.div>
           ))}
         </motion.div>
@@ -466,45 +446,7 @@ const Services = () => {
         hash={hash}
       />
       
-      {/* Test Buttons */}
-      <div className="fixed bottom-4 left-4 space-y-2 z-[99999]">
-        <button
-          onClick={() => {
-            console.log('TEST BUTTON 1 CLICKED!')
-            setClickCount(prev => prev + 1)
-            setLastClickTime(new Date().toLocaleTimeString())
-            setSelectedService(services[0])
-            setIsModalOpen(true)
-          }}
-          className="block w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm"
-        >
-          TEST 1
-        </button>
-        <button
-          onClick={() => {
-            console.log('TEST BUTTON 2 CLICKED!')
-            setClickCount(prev => prev + 1)
-            setLastClickTime(new Date().toLocaleTimeString())
-            setSelectedService(services[1])
-            setIsModalOpen(true)
-          }}
-          className="block w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
-        >
-          TEST 2
-        </button>
-        <button
-          onClick={() => {
-            console.log('TEST BUTTON 3 CLICKED!')
-            setClickCount(prev => prev + 1)
-            setLastClickTime(new Date().toLocaleTimeString())
-            setSelectedService(services[2])
-            setIsModalOpen(true)
-          }}
-          className="block w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm"
-        >
-          TEST 3
-        </button>
-      </div>
+
     </section>
   )
 }
