@@ -21,11 +21,18 @@ import {
   ArrowRight
 } from 'lucide-react'
 
-const Team = () => {
+interface TeamProps {
+  isStandalone?: boolean
+}
+
+const Team = ({ isStandalone = false }: TeamProps) => {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1
   })
+
+  // En modo standalone, siempre mostrar las animaciones
+  const shouldAnimate = isStandalone ? true : inView
 
   const teamMembers = [
     {
@@ -208,12 +215,12 @@ const Team = () => {
   ]
 
   return (
-    <section id="team" ref={ref} className="section-padding gradient-bg">
+    <section id="team" ref={isStandalone ? undefined : ref} className={`${isStandalone ? 'min-h-screen pt-20' : 'section-padding'} gradient-bg`}>
       <div className="container-custom">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
@@ -228,7 +235,7 @@ const Team = () => {
         {/* Stats Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
         >
@@ -236,7 +243,7 @@ const Team = () => {
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
+              animate={shouldAnimate ? { opacity: 1, scale: 1 } : {}}
               transition={{ delay: 0.3 + index * 0.1, duration: 0.6 }}
               className="bg-dark-800/50 backdrop-blur-sm border border-dark-700 rounded-2xl p-6 text-center group hover:border-primary-500/30 transition-all duration-300"
             >
@@ -256,7 +263,7 @@ const Team = () => {
         {/* Team Members Grid */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
         >
@@ -264,7 +271,7 @@ const Team = () => {
             <motion.div
               key={member.id}
               initial={{ opacity: 0, y: 50 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.5 + index * 0.1, duration: 0.6 }}
               className="group"
             >
@@ -390,7 +397,7 @@ const Team = () => {
         {/* Values Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.6 }}
           className="mb-16"
         >
@@ -405,13 +412,13 @@ const Team = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.7 + index * 0.1, duration: 0.6 }}
-                className="bg-dark-800/50 backdrop-blur-sm border border-dark-700 rounded-2xl p-6 text-center group hover:border-primary-500/30 transition-all duration-300"
-              >
+                             <motion.div
+                 key={value.title}
+                 initial={{ opacity: 0, y: 30 }}
+                 animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
+                 transition={{ delay: 0.7 + index * 0.1, duration: 0.6 }}
+                 className="bg-dark-800/50 backdrop-blur-sm border border-dark-700 rounded-2xl p-6 text-center group-30 transition-all duration-300"
+               >
                 <div className={`w-16 h-16 bg-gradient-to-br ${value.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
                   <value.icon className="w-8 h-8 text-white" />
                 </div>
@@ -429,7 +436,7 @@ const Team = () => {
         {/* CTA Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.8 }}
           className="text-center"
         >
@@ -444,7 +451,14 @@ const Team = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => window.location.hash = 'contact'}
+              onClick={() => {
+                if (isStandalone) {
+                  // En modo standalone, cerrar la vista actual
+                  window.history.back()
+                } else {
+                  window.location.hash = 'contact'
+                }
+              }}
               className="button-primary flex items-center space-x-2 mx-auto"
             >
               <span>Iniciar Proyecto</span>

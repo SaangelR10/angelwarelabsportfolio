@@ -131,7 +131,12 @@ const About = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => window.location.hash = 'team'}
+                onClick={() => {
+                  // Usar history.pushState para navegación suave
+                  window.history.pushState({ page: 'team' }, '', '#team')
+                  // Disparar evento personalizado para abrir la página del equipo
+                  window.dispatchEvent(new CustomEvent('openTeamPage'))
+                }}
                 className="button-primary flex items-center space-x-2"
               >
                 <span>Conoce Nuestro Equipo</span>
