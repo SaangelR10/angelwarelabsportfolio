@@ -17,6 +17,7 @@ import {
 import ServiceModal from './ServiceModal'
 import MobileModal from './MobileModal'
 import DebugPanel from './DebugPanel'
+import ConsultationModal from './ConsultationModal'
 
 const Services = () => {
   const [ref, inView] = useInView({
@@ -26,6 +27,7 @@ const Services = () => {
 
   const [selectedService, setSelectedService] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isConsultationOpen, setIsConsultationOpen] = useState(false)
   const [clickCount, setClickCount] = useState(0)
   const [lastClickTime, setLastClickTime] = useState('')
   const router = useRouter()
@@ -410,6 +412,7 @@ const Services = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => setIsConsultationOpen(true)}
             className="button-primary"
           >
             Solicitar Consulta Gratuita
@@ -444,6 +447,12 @@ const Services = () => {
         userAgent={userAgent}
         isMobile={isMobile}
         hash={hash}
+      />
+      
+      {/* Consultation Modal */}
+      <ConsultationModal
+        isOpen={isConsultationOpen}
+        onClose={() => setIsConsultationOpen(false)}
       />
       
 
