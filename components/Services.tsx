@@ -205,17 +205,27 @@ const Services = () => {
   }
 
   const handleServiceClick = (service: any) => {
+    console.log('=== SERVICE CLICK DEBUG ===')
     console.log('Service clicked:', service.title)
+    console.log('Service ID:', service.id)
     console.log('Current modal state:', { isModalOpen, selectedService: selectedService?.title })
     console.log('User agent:', navigator.userAgent)
+    console.log('Touch supported:', 'ontouchstart' in window)
+    console.log('Click event fired at:', new Date().toISOString())
     
+    // Forzar el estado inmediatamente
     setSelectedService(service)
     setIsModalOpen(true)
     
-    console.log('After setting state:', { isModalOpen, selectedService: service.title })
+    // Verificar el estado después de un pequeño delay
+    setTimeout(() => {
+      console.log('State after timeout:', { isModalOpen, selectedService: selectedService?.title })
+    }, 100)
     
     // Actualizar URL con el servicio seleccionado
     window.location.hash = `servicios/${service.id}`
+    
+    console.log('=== END DEBUG ===')
   }
 
   const handleCloseModal = () => {
@@ -316,17 +326,14 @@ const Services = () => {
               </div>
 
               {/* CTA */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+              <div 
                 onClick={() => handleServiceClick(service)}
-                onTouchStart={() => handleServiceClick(service)}
-                className="flex items-center space-x-2 text-primary-400 hover:text-primary-300 transition-colors duration-300 group-hover:translate-x-2 transition-transform duration-300 cursor-pointer touch-manipulation"
+                className="flex items-center space-x-2 text-primary-400 hover:text-primary-300 transition-colors duration-300 group-hover:translate-x-2 transition-transform duration-300 cursor-pointer touch-manipulation p-2 -m-2 rounded-lg hover:bg-primary-500/10"
                 style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 <span className="text-sm font-medium">Saber más</span>
                 <ArrowRight className="w-4 h-4" />
-              </motion.button>
+              </div>
 
               {/* Hover Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-accent-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
