@@ -203,47 +203,43 @@ const Services = () => {
   }
 
   const handleServiceClick = (service: any) => {
+    console.log('Service clicked:', service.title)
     setSelectedService(service)
     setIsModalOpen(true)
     // Actualizar URL con el servicio seleccionado
-    router.push(`#servicios/${service.id}`, { scroll: false })
+    window.location.hash = `servicios/${service.id}`
   }
 
   const handleCloseModal = () => {
     setIsModalOpen(false)
     setSelectedService(null)
     // Limpiar URL al cerrar el modal
-    router.push('#servicios', { scroll: false })
+    window.location.hash = 'servicios'
   }
 
   // Detectar cambios en la URL y abrir el modal correspondiente
   useEffect(() => {
-    const hash = window.location.hash
-    if (hash.startsWith('#servicios/')) {
-      const serviceId = hash.replace('#servicios/', '')
-      const service = services.find(s => s.id === serviceId)
-      if (service) {
-        setSelectedService(service)
-        setIsModalOpen(true)
-      }
-    }
-  }, [searchParams])
-
-  // Escuchar cambios en el hash de la URL
-  useEffect(() => {
-    const handleHashChange = () => {
+    const checkHash = () => {
       const hash = window.location.hash
-      if (hash === '#servicios' || hash === '') {
-        setIsModalOpen(false)
-        setSelectedService(null)
-      } else if (hash.startsWith('#servicios/')) {
+      if (hash.startsWith('#servicios/')) {
         const serviceId = hash.replace('#servicios/', '')
         const service = services.find(s => s.id === serviceId)
         if (service) {
           setSelectedService(service)
           setIsModalOpen(true)
         }
+      } else if (hash === '#servicios' || hash === '') {
+        setIsModalOpen(false)
+        setSelectedService(null)
       }
+    }
+
+    // Verificar hash inicial
+    checkHash()
+
+    // Escuchar cambios en el hash
+    const handleHashChange = () => {
+      checkHash()
     }
 
     window.addEventListener('hashchange', handleHashChange)
@@ -352,6 +348,14 @@ const Services = () => {
           onClose={handleCloseModal}
           service={selectedService}
         />
+      )}
+      
+      {/* Debug Info */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded text-xs">
+          Modal: {isModalOpen ? 'Open' : 'Closed'} | 
+          Service: {selectedService?.title || 'None'}
+        </div>
       )}
     </section>
   )
