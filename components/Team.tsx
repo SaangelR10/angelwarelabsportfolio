@@ -435,34 +435,42 @@ const Team = ({ isStandalone = false }: TeamProps) => {
           </motion.div>
         )}
 
-        {/* CTA Section - Solo mostrar si NO está en modo standalone */}
-        {!isStandalone && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="text-center"
-          >
-            <div className="bg-gradient-to-r from-primary-500/10 to-accent-500/10 rounded-2xl p-8 border border-primary-500/20">
-              <h3 className="text-2xl font-bold text-white mb-4">
-                ¿Listo para trabajar con nuestro equipo?
-              </h3>
-              <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-                Nuestro equipo está listo para transformar tu visión en realidad. 
-                Contáctanos y comencemos a construir algo increíble juntos.
-              </p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => window.location.hash = 'contact'}
-                className="button-primary flex items-center space-x-2 mx-auto"
-              >
-                <span>Iniciar Proyecto</span>
-                <ArrowRight className="w-5 h-5" />
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
+        {/* CTA Section - Mostrar siempre */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="text-center"
+        >
+          <div className="bg-gradient-to-r from-primary-500/10 to-accent-500/10 rounded-2xl p-8 border border-primary-500/20">
+            <h3 className="text-2xl font-bold text-white mb-4">
+              ¿Listo para trabajar con nuestro equipo?
+            </h3>
+            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+              Nuestro equipo está listo para transformar tu visión en realidad. 
+              Contáctanos y comencemos a construir algo increíble juntos.
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                if (isStandalone) {
+                  // En modo standalone, cerrar la vista actual y ir a contacto
+                  window.history.back()
+                  setTimeout(() => {
+                    window.location.hash = 'contact'
+                  }, 500)
+                } else {
+                  window.location.hash = 'contact'
+                }
+              }}
+              className="button-primary flex items-center space-x-2 mx-auto"
+            >
+              <span>Iniciar Proyecto</span>
+              <ArrowRight className="w-5 h-5" />
+            </motion.button>
+          </div>
+        </motion.div>
       </div>
     </section>
   )
