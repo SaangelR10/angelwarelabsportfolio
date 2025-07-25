@@ -15,6 +15,7 @@ import {
   CheckCircle
 } from 'lucide-react'
 import ServiceModal from './ServiceModal'
+import SimpleModal from './SimpleModal'
 
 const Services = () => {
   const [ref, inView] = useInView({
@@ -204,8 +205,13 @@ const Services = () => {
 
   const handleServiceClick = (service: any) => {
     console.log('Service clicked:', service.title)
+    console.log('Current modal state:', { isModalOpen, selectedService: selectedService?.title })
+    
     setSelectedService(service)
     setIsModalOpen(true)
+    
+    console.log('After setting state:', { isModalOpen, selectedService: service.title })
+    
     // Actualizar URL con el servicio seleccionado
     window.location.hash = `servicios/${service.id}`
   }
@@ -350,13 +356,21 @@ const Services = () => {
         />
       )}
       
-      {/* Debug Info */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded text-xs">
-          Modal: {isModalOpen ? 'Open' : 'Closed'} | 
-          Service: {selectedService?.title || 'None'}
-        </div>
+      {/* Simple Modal for testing */}
+      {selectedService && (
+        <SimpleModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          service={selectedService}
+        />
       )}
+      
+      {/* Debug Info */}
+      <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded text-xs z-50">
+        Modal: {isModalOpen ? 'Open' : 'Closed'} | 
+        Service: {selectedService?.title || 'None'} |
+        Hash: {typeof window !== 'undefined' ? window.location.hash : 'N/A'}
+      </div>
     </section>
   )
 }
