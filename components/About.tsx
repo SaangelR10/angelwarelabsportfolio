@@ -127,14 +127,17 @@ const About = () => {
             </div>
 
             {/* CTA */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="button-primary flex items-center space-x-2"
-            >
-              <span>Conoce Nuestro Equipo</span>
-              <ArrowRight className="w-5 h-5" />
-            </motion.button>
+            <div className="flex justify-center">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => window.location.hash = 'team'}
+                className="button-primary flex items-center space-x-2"
+              >
+                <span>Conoce Nuestro Equipo</span>
+                <ArrowRight className="w-5 h-5" />
+              </motion.button>
+            </div>
           </motion.div>
 
           {/* Right Column - Stats & Visual */}
