@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react'
+import Image from 'next/image'
 
 const Testimonials = () => {
   const [ref, inView] = useInView({
@@ -133,16 +134,19 @@ const Testimonials = () => {
 
                 {/* Content */}
                 <blockquote className="text-lg sm:text-xl text-gray-300 leading-relaxed mb-8 italic">
-                  "{testimonials[currentIndex].content}"
+                  &ldquo;{testimonials[currentIndex].content}&rdquo;
                 </blockquote>
 
                 {/* Author */}
                 <div className="flex items-center justify-center space-x-4">
-                  <img
-                    src={testimonials[currentIndex].image}
-                    alt={testimonials[currentIndex].name}
-                    className="w-16 h-16 rounded-full object-cover border-2 border-primary-500/30"
-                  />
+                  <div className="relative w-16 h-16 rounded-full border-2 border-primary-500/30 overflow-hidden">
+                    <Image
+                      src={testimonials[currentIndex].image}
+                      alt={testimonials[currentIndex].name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
                   <div className="text-left">
                     <div className="font-semibold text-white">
                       {testimonials[currentIndex].name}
