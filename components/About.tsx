@@ -126,8 +126,8 @@ const About = () => {
               </div>
             </div>
 
-            {/* CTA */}
-            <div className="flex justify-center">
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -140,6 +140,16 @@ const About = () => {
                 className="button-primary flex items-center space-x-2"
               >
                 <span>Conoce Nuestro Equipo</span>
+                <ArrowRight className="w-5 h-5" />
+              </motion.button>
+              
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => window.location.hash = 'contact'}
+                className="button-secondary flex items-center space-x-2"
+              >
+                <span>Iniciar Proyecto</span>
                 <ArrowRight className="w-5 h-5" />
               </motion.button>
             </div>
