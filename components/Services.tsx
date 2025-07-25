@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import ServiceModal from './ServiceModal'
 import SimpleModal from './SimpleModal'
+import MobileModal from './MobileModal'
 
 const Services = () => {
   const [ref, inView] = useInView({
@@ -206,6 +207,7 @@ const Services = () => {
   const handleServiceClick = (service: any) => {
     console.log('Service clicked:', service.title)
     console.log('Current modal state:', { isModalOpen, selectedService: selectedService?.title })
+    console.log('User agent:', navigator.userAgent)
     
     setSelectedService(service)
     setIsModalOpen(true)
@@ -318,7 +320,9 @@ const Services = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleServiceClick(service)}
-                className="flex items-center space-x-2 text-primary-400 hover:text-primary-300 transition-colors duration-300 group-hover:translate-x-2 transition-transform duration-300 cursor-pointer"
+                onTouchStart={() => handleServiceClick(service)}
+                className="flex items-center space-x-2 text-primary-400 hover:text-primary-300 transition-colors duration-300 group-hover:translate-x-2 transition-transform duration-300 cursor-pointer touch-manipulation"
+                style={{ WebkitTapHighlightColor: 'transparent' }}
               >
                 <span className="text-sm font-medium">Saber más</span>
                 <ArrowRight className="w-4 h-4" />
@@ -356,9 +360,9 @@ const Services = () => {
         />
       )}
       
-      {/* Simple Modal for testing */}
+      {/* Mobile Modal */}
       {selectedService && (
-        <SimpleModal
+        <MobileModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           service={selectedService}
@@ -366,10 +370,11 @@ const Services = () => {
       )}
       
       {/* Debug Info */}
-      <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded text-xs z-50">
+      <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded text-xs z-[9999]">
         Modal: {isModalOpen ? 'Open' : 'Closed'} | 
         Service: {selectedService?.title || 'None'} |
-        Hash: {typeof window !== 'undefined' ? window.location.hash : 'N/A'}
+        Hash: {typeof window !== 'undefined' ? window.location.hash : 'N/A'} |
+        Mobile: {typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'Yes' : 'No'}
       </div>
     </section>
   )
