@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { 
   Globe, 
@@ -15,8 +15,8 @@ import {
   CheckCircle
 } from 'lucide-react'
 import ServiceModal from './ServiceModal'
-import SimpleModal from './SimpleModal'
 import MobileModal from './MobileModal'
+import DebugPanel from './DebugPanel'
 
 const Services = () => {
   const [ref, inView] = useInView({
@@ -26,8 +26,15 @@ const Services = () => {
 
   const [selectedService, setSelectedService] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [clickCount, setClickCount] = useState(0)
+  const [lastClickTime, setLastClickTime] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
+  
+  // Debug info
+  const userAgent = typeof window !== 'undefined' ? navigator.userAgent : ''
+  const isMobile = typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+  const hash = typeof window !== 'undefined' ? window.location.hash : ''
 
   const services = [
     {
@@ -204,7 +211,7 @@ const Services = () => {
     }
   }
 
-  const handleServiceClick = (service: any) => {
+  const handleServiceClick = useCallback((service: any) => {
     console.log('=== SERVICE CLICK DEBUG ===')
     console.log('Service clicked:', service.title)
     console.log('Service ID:', service.id)
@@ -213,27 +220,27 @@ const Services = () => {
     console.log('Touch supported:', 'ontouchstart' in window)
     console.log('Click event fired at:', new Date().toISOString())
     
-    // Forzar el estado inmediatamente
+    // Update debug state
+    setClickCount(prev => prev + 1)
+    setLastClickTime(new Date().toLocaleTimeString())
+    
+    // Force state update immediately
     setSelectedService(service)
     setIsModalOpen(true)
     
-    // Verificar el estado después de un pequeño delay
-    setTimeout(() => {
-      console.log('State after timeout:', { isModalOpen, selectedService: selectedService?.title })
-    }, 100)
-    
-    // Actualizar URL con el servicio seleccionado
+    // Update URL
     window.location.hash = `servicios/${service.id}`
     
     console.log('=== END DEBUG ===')
-  }
+  }, [isModalOpen, selectedService])
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
+    console.log('=== CLOSE MODAL DEBUG ===')
     setIsModalOpen(false)
     setSelectedService(null)
-    // Limpiar URL al cerrar el modal
     window.location.hash = 'servicios'
-  }
+    console.log('=== END CLOSE DEBUG ===')
+  }, [])
 
   // Detectar cambios en la URL y abrir el modal correspondiente
   useEffect(() => {
@@ -326,14 +333,26 @@ const Services = () => {
               </div>
 
               {/* CTA */}
-              <div 
-                onClick={() => handleServiceClick(service)}
-                className="flex items-center space-x-2 text-primary-400 hover:text-primary-300 transition-colors duration-300 group-hover:translate-x-2 transition-transform duration-300 cursor-pointer touch-manipulation p-2 -m-2 rounded-lg hover:bg-primary-500/10"
-                style={{ WebkitTapHighlightColor: 'transparent' }}
+              <button 
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handleServiceClick(service)
+                }}
+                onTouchStart={(e) => {
+                  e.preventDefault()
+                  handleServiceClick(service)
+                }}
+                className="flex items-center space-x-2 text-primary-400 hover:text-primary-300 transition-colors duration-300 group-hover:translate-x-2 transition-transform duration-300 cursor-pointer touch-manipulation p-3 rounded-lg hover:bg-primary-500/10 active:bg-primary-500/20"
+                style={{ 
+                  WebkitTapHighlightColor: 'transparent',
+                  WebkitUserSelect: 'none',
+                  userSelect: 'none'
+                }}
               >
                 <span className="text-sm font-medium">Saber más</span>
                 <ArrowRight className="w-4 h-4" />
-              </div>
+              </button>
 
               {/* Hover Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-accent-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -376,13 +395,16 @@ const Services = () => {
         />
       )}
       
-      {/* Debug Info */}
-      <div className="fixed bottom-4 right-4 bg-black/80 text-white p-2 rounded text-xs z-[9999]">
-        Modal: {isModalOpen ? 'Open' : 'Closed'} | 
-        Service: {selectedService?.title || 'None'} |
-        Hash: {typeof window !== 'undefined' ? window.location.hash : 'N/A'} |
-        Mobile: {typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 'Yes' : 'No'}
-      </div>
+      {/* Debug Panel */}
+      <DebugPanel
+        isModalOpen={isModalOpen}
+        selectedService={selectedService}
+        clickCount={clickCount}
+        lastClickTime={lastClickTime}
+        userAgent={userAgent}
+        isMobile={isMobile}
+        hash={hash}
+      />
     </section>
   )
 }
