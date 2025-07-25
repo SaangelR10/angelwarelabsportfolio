@@ -394,78 +394,75 @@ const Team = ({ isStandalone = false }: TeamProps) => {
           ))}
         </motion.div>
 
-        {/* Values Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="mb-16"
-        >
-          <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-white mb-4">
-              Nuestros Valores
-            </h3>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              Los principios que guían nuestro trabajo y nos permiten entregar resultados excepcionales
-            </p>
-          </div>
+                {/* Values Section - Solo mostrar si NO está en modo standalone */}
+        {!isStandalone && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="mb-16"
+          >
+            <div className="text-center mb-12">
+              <h3 className="text-3xl font-bold text-white mb-4">
+                Nuestros Valores
+              </h3>
+              <p className="text-gray-300 max-w-2xl mx-auto">
+                Los principios que guían nuestro trabajo y nos permiten entregar resultados excepcionales
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-                             <motion.div
-                 key={value.title}
-                 initial={{ opacity: 0, y: 30 }}
-                 animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-                 transition={{ delay: 0.7 + index * 0.1, duration: 0.6 }}
-                 className="bg-dark-800/50 backdrop-blur-sm border border-dark-700 rounded-2xl p-6 text-center group-30 transition-all duration-300"
-               >
-                <div className={`w-16 h-16 bg-gradient-to-br ${value.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                  <value.icon className="w-8 h-8 text-white" />
-                </div>
-                <h4 className="text-xl font-bold text-white mb-3">
-                  {value.title}
-                </h4>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  {value.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {values.map((value, index) => (
+                <motion.div
+                  key={value.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.7 + index * 0.1, duration: 0.6 }}
+                  className="bg-dark-800/50 backdrop-blur-sm border border-dark-700 rounded-2xl p-6 text-center group hover:border-primary-500/30 transition-all duration-300"
+                >
+                  <div className={`w-16 h-16 bg-gradient-to-br ${value.gradient} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <value.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h4 className="text-xl font-bold text-white mb-3">
+                    {value.title}
+                  </h4>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    {value.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
-        {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-center"
-        >
-          <div className="bg-gradient-to-r from-primary-500/10 to-accent-500/10 rounded-2xl p-8 border border-primary-500/20">
-            <h3 className="text-2xl font-bold text-white mb-4">
-              ¿Listo para trabajar con nuestro equipo?
-            </h3>
-            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-              Nuestro equipo está listo para transformar tu visión en realidad. 
-              Contáctanos y comencemos a construir algo increíble juntos.
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                if (isStandalone) {
-                  // En modo standalone, cerrar la vista actual
-                  window.history.back()
-                } else {
-                  window.location.hash = 'contact'
-                }
-              }}
-              className="button-primary flex items-center space-x-2 mx-auto"
-            >
-              <span>Iniciar Proyecto</span>
-              <ArrowRight className="w-5 h-5" />
-            </motion.button>
-          </div>
-        </motion.div>
+        {/* CTA Section - Solo mostrar si NO está en modo standalone */}
+        {!isStandalone && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="text-center"
+          >
+            <div className="bg-gradient-to-r from-primary-500/10 to-accent-500/10 rounded-2xl p-8 border border-primary-500/20">
+              <h3 className="text-2xl font-bold text-white mb-4">
+                ¿Listo para trabajar con nuestro equipo?
+              </h3>
+              <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+                Nuestro equipo está listo para transformar tu visión en realidad. 
+                Contáctanos y comencemos a construir algo increíble juntos.
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => window.location.hash = 'contact'}
+                className="button-primary flex items-center space-x-2 mx-auto"
+              >
+                <span>Iniciar Proyecto</span>
+                <ArrowRight className="w-5 h-5" />
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
       </div>
     </section>
   )
