@@ -1,8 +1,8 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ArrowRight, CheckCircle, Star, Clock, Users, Zap, Shield, Code, Database, Globe, Smartphone, Mail, Phone, User, MessageSquare } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { X, ArrowRight, CheckCircle, Star, Clock, Users, Zap, Shield, Code, Database, Globe, Smartphone, Mail, Phone, User, MessageSquare, Upload, File, Trash2 } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
 
 interface ConsultationModalProps {
   isOpen: boolean
@@ -20,6 +20,9 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
     budget: '',
     timeline: ''
   })
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+  const [isDragOver, setIsDragOver] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [step, setStep] = useState(1)
 
   const services = [
@@ -92,9 +95,82 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
     }))
   }
 
+  const validateAndAddFiles = (files: File[]) => {
+    const maxSize = 10 * 1024 * 1024 // 10MB
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'text/plain',
+      'application/zip',
+      'application/x-rar-compressed'
+    ]
+    
+    const validFiles = files.filter(file => {
+      if (file.size > maxSize) {
+        alert(`El archivo ${file.name} es demasiado grande. Máximo 10MB.`)
+        return false
+      }
+      
+      if (!allowedTypes.includes(file.type)) {
+        alert(`El archivo ${file.name} no es un tipo válido.`)
+        return false
+      }
+      
+      return true
+    })
+    
+    setUploadedFiles(prev => [...prev, ...validFiles])
+  }
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    validateAndAddFiles(files)
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(false)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragOver(false)
+    const files = Array.from(e.dataTransfer.files)
+    validateAndAddFiles(files)
+  }
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  const getFileIcon = (fileType: string) => {
+    if (fileType.includes('pdf')) return '📄'
+    if (fileType.includes('word') || fileType.includes('document')) return '📝'
+    if (fileType.includes('image')) return '🖼️'
+    if (fileType.includes('zip') || fileType.includes('rar')) return '📦'
+    return '📎'
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', { selectedService, formData })
+    console.log('Form submitted:', { selectedService, formData, uploadedFiles })
     // Aquí iría la lógica para enviar el formulario
     setStep(3)
   }
@@ -110,6 +186,7 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
       budget: '',
       timeline: ''
     })
+    setUploadedFiles([])
     setStep(1)
   }
 
@@ -330,20 +407,98 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-white font-medium mb-2">
-                        Describe tu proyecto *
-                      </label>
-                      <textarea
-                        name="message"
-                        value={formData.message}
-                        onChange={handleInputChange}
-                        required
-                        rows={4}
-                        className="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:outline-none transition-colors duration-300 resize-none"
-                        placeholder="Cuéntanos sobre tu proyecto, objetivos, requisitos específicos..."
-                      />
-                    </div>
+                                         <div>
+                       <label className="block text-white font-medium mb-2">
+                         Describe tu proyecto *
+                       </label>
+                       <textarea
+                         name="message"
+                         value={formData.message}
+                         onChange={handleInputChange}
+                         required
+                         rows={4}
+                         className="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-primary-500 focus:outline-none transition-colors duration-300 resize-none"
+                         placeholder="Cuéntanos sobre tu proyecto, objetivos, requisitos específicos..."
+                       />
+                     </div>
+
+                     {/* File Upload Section */}
+                     <div>
+                       <label className="block text-white font-medium mb-2">
+                         Documentación del proyecto
+                       </label>
+                       <div className="space-y-4">
+                         {/* Upload Area */}
+                         <div 
+                           onClick={() => fileInputRef.current?.click()}
+                           onDragOver={handleDragOver}
+                           onDragLeave={handleDragLeave}
+                           onDrop={handleDrop}
+                           className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all duration-300 ${
+                             isDragOver 
+                               ? 'border-primary-500 bg-primary-500/10' 
+                               : 'border-dark-600 hover:border-primary-500 bg-dark-700/50 hover:bg-dark-700'
+                           }`}
+                         >
+                           <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                           <p className="text-white font-medium mb-1">
+                             Subir archivos
+                           </p>
+                           <p className="text-gray-400 text-sm">
+                             {isDragOver ? 'Suelta los archivos aquí' : 'Arrastra archivos aquí o haz clic para seleccionar'}
+                           </p>
+                           <p className="text-gray-500 text-xs mt-2">
+                             PDF, Word, imágenes, ZIP • Máximo 10MB por archivo
+                           </p>
+                           <input
+                             ref={fileInputRef}
+                             type="file"
+                             multiple
+                             onChange={handleFileUpload}
+                             className="hidden"
+                             accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt,.zip,.rar"
+                           />
+                         </div>
+
+                         {/* Uploaded Files List */}
+                         {uploadedFiles.length > 0 && (
+                           <div className="space-y-2">
+                             <h4 className="text-white font-medium text-sm">
+                               Archivos subidos ({uploadedFiles.length})
+                             </h4>
+                             <div className="space-y-2 max-h-32 overflow-y-auto">
+                               {uploadedFiles.map((file, index) => (
+                                 <motion.div
+                                   key={index}
+                                   initial={{ opacity: 0, y: -10 }}
+                                   animate={{ opacity: 1, y: 0 }}
+                                   className="flex items-center justify-between bg-dark-700/50 border border-dark-600 rounded-lg p-3"
+                                 >
+                                   <div className="flex items-center space-x-3">
+                                     <span className="text-lg">{getFileIcon(file.type)}</span>
+                                     <div className="flex-1 min-w-0">
+                                       <p className="text-white text-sm font-medium truncate">
+                                         {file.name}
+                                       </p>
+                                       <p className="text-gray-400 text-xs">
+                                         {formatFileSize(file.size)}
+                                       </p>
+                                     </div>
+                                   </div>
+                                   <button
+                                     type="button"
+                                     onClick={() => removeFile(index)}
+                                     className="text-red-400 hover:text-red-300 transition-colors duration-300 p-1"
+                                   >
+                                     <Trash2 className="w-4 h-4" />
+                                   </button>
+                                 </motion.div>
+                               ))}
+                             </div>
+                           </div>
+                         )}
+                       </div>
+                     </div>
 
                     <div className="flex space-x-4 pt-4">
                       <button
