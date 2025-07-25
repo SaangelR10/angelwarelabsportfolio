@@ -2,7 +2,8 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { 
   Globe, 
   Smartphone, 
@@ -23,9 +24,12 @@ const Services = () => {
 
   const [selectedService, setSelectedService] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   const services = [
     {
+      id: 'desarrollo-web',
       icon: Globe,
       title: 'Desarrollo Web',
       description: 'Sitios web modernos, responsivos y optimizados para SEO con las últimas tecnologías.',
@@ -50,6 +54,7 @@ const Services = () => {
       gradient: 'from-blue-500 to-cyan-500'
     },
     {
+      id: 'apps-moviles',
       icon: Smartphone,
       title: 'Aplicaciones Móviles',
       description: 'Apps nativas e híbridas para iOS y Android con experiencia de usuario excepcional.',
@@ -74,6 +79,7 @@ const Services = () => {
       gradient: 'from-purple-500 to-pink-500'
     },
     {
+      id: 'full-stack',
       icon: Code,
       title: 'Desarrollo Full-Stack',
       description: 'Soluciones completas desde el frontend hasta el backend con arquitectura escalable.',
@@ -98,6 +104,7 @@ const Services = () => {
       gradient: 'from-green-500 to-emerald-500'
     },
     {
+      id: 'bases-datos',
       icon: Database,
       title: 'Bases de Datos',
       description: 'Diseño e implementación de bases de datos robustas y optimizadas para tu negocio.',
@@ -122,6 +129,7 @@ const Services = () => {
       gradient: 'from-orange-500 to-red-500'
     },
     {
+      id: 'ciberseguridad',
       icon: Shield,
       title: 'Ciberseguridad',
       description: 'Protección integral de datos y aplicaciones con las mejores prácticas de seguridad.',
@@ -146,6 +154,7 @@ const Services = () => {
       gradient: 'from-indigo-500 to-purple-500'
     },
     {
+      id: 'consultoria-it',
       icon: Zap,
       title: 'Consultoría IT',
       description: 'Asesoramiento estratégico para optimizar tu infraestructura tecnológica.',
@@ -196,12 +205,50 @@ const Services = () => {
   const handleServiceClick = (service: any) => {
     setSelectedService(service)
     setIsModalOpen(true)
+    // Actualizar URL con el servicio seleccionado
+    router.push(`#servicios/${service.id}`, { scroll: false })
   }
 
   const handleCloseModal = () => {
     setIsModalOpen(false)
     setSelectedService(null)
+    // Limpiar URL al cerrar el modal
+    router.push('#servicios', { scroll: false })
   }
+
+  // Detectar cambios en la URL y abrir el modal correspondiente
+  useEffect(() => {
+    const hash = window.location.hash
+    if (hash.startsWith('#servicios/')) {
+      const serviceId = hash.replace('#servicios/', '')
+      const service = services.find(s => s.id === serviceId)
+      if (service) {
+        setSelectedService(service)
+        setIsModalOpen(true)
+      }
+    }
+  }, [searchParams])
+
+  // Escuchar cambios en el hash de la URL
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash
+      if (hash === '#servicios' || hash === '') {
+        setIsModalOpen(false)
+        setSelectedService(null)
+      } else if (hash.startsWith('#servicios/')) {
+        const serviceId = hash.replace('#servicios/', '')
+        const service = services.find(s => s.id === serviceId)
+        if (service) {
+          setSelectedService(service)
+          setIsModalOpen(true)
+        }
+      }
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
 
   return (
     <section id="services" className="section-padding gradient-bg">
