@@ -221,15 +221,28 @@ const Services = () => {
     console.log('Click event fired at:', new Date().toISOString())
     
     // Update debug state
-    setClickCount(prev => prev + 1)
+    setClickCount(prev => {
+      console.log('Updating click count from', prev, 'to', prev + 1)
+      return prev + 1
+    })
     setLastClickTime(new Date().toLocaleTimeString())
     
     // Force state update immediately
+    console.log('Setting selectedService to:', service.title)
     setSelectedService(service)
+    
+    console.log('Setting isModalOpen to true')
     setIsModalOpen(true)
     
     // Update URL
     window.location.hash = `servicios/${service.id}`
+    
+    // Force a re-render test
+    setTimeout(() => {
+      console.log('=== STATE CHECK AFTER TIMEOUT ===')
+      console.log('isModalOpen should be true')
+      console.log('selectedService should be:', service.title)
+    }, 100)
     
     console.log('=== END DEBUG ===')
   }, [isModalOpen, selectedService])
@@ -333,26 +346,39 @@ const Services = () => {
               </div>
 
               {/* CTA */}
-              <button 
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  handleServiceClick(service)
-                }}
-                onTouchStart={(e) => {
-                  e.preventDefault()
-                  handleServiceClick(service)
-                }}
+              <div 
                 className="flex items-center space-x-2 text-primary-400 hover:text-primary-300 transition-colors duration-300 group-hover:translate-x-2 transition-transform duration-300 cursor-pointer touch-manipulation p-3 rounded-lg hover:bg-primary-500/10 active:bg-primary-500/20"
                 style={{ 
                   WebkitTapHighlightColor: 'transparent',
                   WebkitUserSelect: 'none',
-                  userSelect: 'none'
+                  userSelect: 'none',
+                  minHeight: '44px',
+                  minWidth: '44px'
+                }}
+                onClick={() => {
+                  console.log('DIV CLICKED!', service.title)
+                  handleServiceClick(service)
+                }}
+                onTouchStart={() => {
+                  console.log('TOUCH START!', service.title)
+                  handleServiceClick(service)
+                }}
+                onMouseDown={() => {
+                  console.log('MOUSE DOWN!', service.title)
+                  handleServiceClick(service)
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    handleServiceClick(service)
+                  }
                 }}
               >
                 <span className="text-sm font-medium">Saber más</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </div>
 
               {/* Hover Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-accent-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -405,6 +431,20 @@ const Services = () => {
         isMobile={isMobile}
         hash={hash}
       />
+      
+      {/* Test Button */}
+      <button
+        onClick={() => {
+          console.log('TEST BUTTON CLICKED!')
+          setClickCount(prev => prev + 1)
+          setLastClickTime(new Date().toLocaleTimeString())
+          setSelectedService(services[0])
+          setIsModalOpen(true)
+        }}
+        className="fixed bottom-4 left-4 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg z-[99999]"
+      >
+        TEST MODAL
+      </button>
     </section>
   )
 }
