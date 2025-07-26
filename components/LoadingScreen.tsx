@@ -30,7 +30,7 @@ const LoadingScreen = () => {
 
     // Change icons during loading
     const iconInterval = setInterval(() => {
-      setCurrentIcon(prev => (prev + 1) % icons.length)
+      setCurrentIcon(prev => (prev + 1) % 4) // Fixed to 4 icons
     }, 800)
 
     // Complete loading after 3-4 seconds
@@ -45,7 +45,7 @@ const LoadingScreen = () => {
       clearInterval(iconInterval)
       clearTimeout(loadingTimeout)
     }
-  }, [icons.length])
+  }, [])
 
   return (
     <AnimatePresence>
