@@ -89,7 +89,7 @@ const Footer = () => {
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-4 md:space-y-6">
+          <div className="space-y-4 md:space-y-6 ml-4 md:ml-0">
             <h3 className="text-base md:text-lg font-semibold text-white">Enlaces Rápidos</h3>
             <ul className="space-y-2 md:space-y-3">
               {quickLinks.map((link, index) => (
@@ -111,7 +111,7 @@ const Footer = () => {
           </div>
 
           {/* Services */}
-          <div className="space-y-4 md:space-y-6">
+          <div className="space-y-4 md:space-y-6 ml-4 md:ml-0">
             <h3 className="text-base md:text-lg font-semibold text-white">Servicios</h3>
             <ul className="space-y-2 md:space-y-3">
               {services.map((service, index) => (
@@ -130,7 +130,7 @@ const Footer = () => {
           </div>
 
           {/* Contact Info */}
-          <div className="space-y-4 md:space-y-6">
+          <div className="space-y-4 md:space-y-6 ml-4 md:ml-0">
             <h3 className="text-base md:text-lg font-semibold text-white">Contacto</h3>
             <div className="space-y-3 md:space-y-4">
               {contactInfo.map((info, index) => (
