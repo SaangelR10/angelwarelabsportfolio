@@ -265,10 +265,10 @@ const Contact = () => {
 
             {/* Social Links */}
             <div>
-              <h4 className="text-lg font-semibold text-white mb-4">
+              <h4 className="text-lg font-semibold text-white mb-4 text-center sm:text-left">
                 Síguenos en redes sociales
               </h4>
-              <div className="flex space-x-4">
+              <div className="flex justify-center sm:justify-start space-x-4">
                 {socialLinks.map((social, index) => (
                   <motion.a
                     key={social.label}
