@@ -58,7 +58,7 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {/* Company Info */}
           <div className="space-y-4 md:space-y-6 col-span-2 md:col-span-1">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-center md:justify-start space-x-2">
               <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm md:text-lg">A</span>
               </div>
@@ -66,11 +66,11 @@ const Footer = () => {
                 Angelware Labs
               </span>
             </div>
-            <p className="text-gray-400 leading-relaxed text-sm md:text-base">
+            <p className="text-gray-400 leading-relaxed text-sm md:text-base text-center md:text-left">
               Transformamos ideas en experiencias digitales excepcionales con 
               tecnología de vanguardia y diseño innovador.
             </p>
-            <div className="flex space-x-3 md:space-x-4">
+            <div className="flex justify-center md:justify-start space-x-3 md:space-x-4">
               {socialLinks.map((social, index) => (
                 <motion.a
                   key={social.label}
