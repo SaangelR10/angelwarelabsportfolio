@@ -16,7 +16,6 @@ const LoadingScreen = () => {
   ]
 
   useEffect(() => {
-    // Simulate loading progress
     const progressInterval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
@@ -27,12 +26,10 @@ const LoadingScreen = () => {
       })
     }, 200)
 
-    // Change icons during loading
     const iconInterval = setInterval(() => {
-      setCurrentIcon(prev => (prev + 1) % 4) // Fixed to 4 icons
+      setCurrentIcon(prev => (prev + 1) % 4)
     }, 800)
 
-    // Complete loading after 3-4 seconds
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false)
       clearInterval(progressInterval)
@@ -46,15 +43,16 @@ const LoadingScreen = () => {
     }
   }, [])
 
-  if (!isLoading) return null
+  if (!isLoading) {
+    return null
+  }
 
   return (
     <div className="fixed inset-0 z-50 bg-dark-900 flex items-center justify-center">
-      {/* Background Pattern */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-accent-500/5 to-purple-500/5"></div>
         <div className="absolute top-0 left-0 w-full h-full">
-          {[...Array(20)].map((_, i) => (
+          {Array.from({ length: 20 }, (_, i) => (
             <div
               key={i}
               className="absolute w-2 h-2 bg-primary-400 rounded-full animate-pulse"
@@ -68,26 +66,21 @@ const LoadingScreen = () => {
         </div>
       </div>
 
-      {/* Main Loading Content */}
       <div className="relative z-10 text-center">
-        {/* Logo Animation */}
         <div className="mb-8 animate-bounce">
           <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary-500 to-accent-500 rounded-2xl flex items-center justify-center shadow-2xl">
             <span className="text-white font-bold text-2xl">A</span>
           </div>
         </div>
 
-        {/* Title */}
         <h1 className="text-3xl md:text-4xl font-bold gradient-text mb-4 animate-fade-in">
           Angelware Labs
         </h1>
 
-        {/* Subtitle */}
         <p className="text-gray-400 text-lg mb-8 animate-fade-in">
           Transformando ideas en experiencias digitales
         </p>
 
-        {/* Loading Icon */}
         <div className="mb-6">
           <div className="flex items-center justify-center space-x-2">
             <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
@@ -100,7 +93,6 @@ const LoadingScreen = () => {
           </div>
         </div>
 
-        {/* Progress Bar */}
         <div className="w-64 md:w-80 mx-auto mb-4">
           <div className="bg-dark-800 rounded-full h-2 overflow-hidden">
             <div 
@@ -112,14 +104,12 @@ const LoadingScreen = () => {
           </div>
         </div>
 
-        {/* Progress Text */}
         <div className="text-gray-500 text-sm">
           {Math.round(progress)}% completado
         </div>
 
-        {/* Floating Elements */}
         <div className="absolute inset-0 pointer-events-none">
-          {[...Array(6)].map((_, i) => (
+          {Array.from({ length: 6 }, (_, i) => (
             <div
               key={i}
               className="absolute w-1 h-1 bg-primary-400 rounded-full animate-bounce"
