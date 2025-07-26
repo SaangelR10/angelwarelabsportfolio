@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Code, Zap, Cpu, Database } from 'lucide-react'
 
 const LoadingScreen = () => {
@@ -47,15 +47,15 @@ const LoadingScreen = () => {
     }
   }, [])
 
+  if (!isLoading) return null
+
   return (
-    <AnimatePresence>
-      {isLoading && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: 'easeInOut' }}
-          className="fixed inset-0 z-50 bg-dark-900 flex items-center justify-center"
-        >
+    <motion.div
+      initial={{ opacity: 1 }}
+      animate={{ opacity: isLoading ? 1 : 0 }}
+      transition={{ duration: 0.8, ease: 'easeInOut' }}
+      className="fixed inset-0 z-50 bg-dark-900 flex items-center justify-center"
+    >
           {/* Background Pattern */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-accent-500/5 to-purple-500/5"></div>
@@ -194,8 +194,6 @@ const LoadingScreen = () => {
             </div>
           </div>
         </motion.div>
-      )}
-    </AnimatePresence>
   )
 }
 
