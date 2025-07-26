@@ -16,7 +16,7 @@ import {
 } from 'lucide-react'
 import ServiceModal from './ServiceModal'
 import MobileModal from './MobileModal'
-import DebugPanel from './DebugPanel'
+
 import ConsultationModal from './ConsultationModal'
 
 const Services = () => {
@@ -28,15 +28,8 @@ const Services = () => {
   const [selectedService, setSelectedService] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isConsultationOpen, setIsConsultationOpen] = useState(false)
-  const [clickCount, setClickCount] = useState(0)
-  const [lastClickTime, setLastClickTime] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
-  
-  // Debug info
-  const userAgent = typeof window !== 'undefined' ? navigator.userAgent : ''
-  const isMobile = typeof window !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-  const hash = typeof window !== 'undefined' ? window.location.hash : ''
 
   const services = [
     {
@@ -438,16 +431,7 @@ const Services = () => {
         />
       )}
       
-      {/* Debug Panel */}
-      <DebugPanel
-        isModalOpen={isModalOpen}
-        selectedService={selectedService}
-        clickCount={clickCount}
-        lastClickTime={lastClickTime}
-        userAgent={userAgent}
-        isMobile={isMobile}
-        hash={hash}
-      />
+      
       
       {/* Consultation Modal */}
       <ConsultationModal
