@@ -156,7 +156,7 @@ const Footer = () => {
            initial={{ opacity: 0, y: 20 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ delay: 0.5, duration: 0.8 }}
-           className="border-t border-dark-700 mt-12 pt-8"
+           className="border-t border-dark-700 mt-12 pt-8 ml-4 md:ml-0"
          >
            <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
              <div className="text-gray-400 text-sm">
