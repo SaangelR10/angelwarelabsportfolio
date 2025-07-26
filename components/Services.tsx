@@ -207,47 +207,15 @@ const Services = () => {
   }
 
   const handleServiceClick = useCallback((service: any) => {
-    console.log('=== SERVICE CLICK DEBUG ===')
-    console.log('Service clicked:', service.title)
-    console.log('Service ID:', service.id)
-    console.log('Current modal state:', { isModalOpen, selectedService: selectedService?.title })
-    console.log('User agent:', navigator.userAgent)
-    console.log('Touch supported:', 'ontouchstart' in window)
-    console.log('Click event fired at:', new Date().toISOString())
-    
-    // Update debug state
-    setClickCount(prev => {
-      console.log('Updating click count from', prev, 'to', prev + 1)
-      return prev + 1
-    })
-    setLastClickTime(new Date().toLocaleTimeString())
-    
-    // Force state update immediately
-    console.log('Setting selectedService to:', service.title)
     setSelectedService(service)
-    
-    console.log('Setting isModalOpen to true')
     setIsModalOpen(true)
-    
-    // Update URL
     window.location.hash = `servicios/${service.id}`
-    
-    // Force a re-render test
-    setTimeout(() => {
-      console.log('=== STATE CHECK AFTER TIMEOUT ===')
-      console.log('isModalOpen should be true')
-      console.log('selectedService should be:', service.title)
-    }, 100)
-    
-    console.log('=== END DEBUG ===')
-  }, [isModalOpen, selectedService])
+  }, [])
 
   const handleCloseModal = useCallback(() => {
-    console.log('=== CLOSE MODAL DEBUG ===')
     setIsModalOpen(false)
     setSelectedService(null)
     window.location.hash = 'servicios'
-    console.log('=== END CLOSE DEBUG ===')
   }, [])
 
   // Detectar cambios en la URL y abrir el modal correspondiente
@@ -277,7 +245,7 @@ const Services = () => {
 
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [])
+  }, [services])
 
   return (
     <section id="services" className="section-padding gradient-bg">
