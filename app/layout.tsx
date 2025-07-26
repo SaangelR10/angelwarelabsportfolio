@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import Particles from '@/components/Particles'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -32,8 +33,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className="scroll-smooth">
-      <body className={`${inter.className} bg-dark-900 text-white antialiased`}>
-        {children}
+      <body className={`${inter.className} bg-dark-900 text-white antialiased relative`}>
+        <Particles />
+        <div className="relative z-10">
+          {children}
+        </div>
       </body>
     </html>
   )
