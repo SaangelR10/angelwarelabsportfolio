@@ -57,7 +57,7 @@ const Footer = () => {
       <div className="container-custom py-16">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {/* Company Info */}
-          <div className="space-y-4 md:space-y-6 col-span-2 md:col-span-1">
+          <div className="space-y-4 md:space-y-6 col-span-2 md:col-span-1 ml-4 md:ml-0">
             <div className="flex items-center justify-center md:justify-start space-x-2">
               <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm md:text-lg">A</span>
