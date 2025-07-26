@@ -30,7 +30,6 @@ const Header = () => {
     { name: 'Portafolio', href: 'portfolio' },
     { name: 'Sobre Nosotros', href: 'about' },
     { name: 'Testimonios', href: 'testimonials' },
-    { name: 'Contacto', href: 'contact' },
   ]
 
   return (
