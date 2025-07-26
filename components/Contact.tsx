@@ -263,28 +263,7 @@ const Contact = () => {
               ))}
             </div>
 
-            {/* Social Links */}
-            <div>
-              <h4 className="text-lg font-semibold text-white mb-4 text-center sm:text-left">
-                Síguenos en redes sociales
-              </h4>
-              <div className="flex justify-center sm:justify-start space-x-4">
-                {socialLinks.map((social, index) => (
-                  <motion.a
-                    key={social.label}
-                    href={social.href}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={inView ? { opacity: 1, scale: 1 } : {}}
-                    transition={{ delay: 0.8 + index * 0.1, duration: 0.5 }}
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="w-12 h-12 bg-dark-800/50 border border-dark-700 rounded-lg flex items-center justify-center hover:bg-primary-500 hover:border-primary-500 transition-all duration-300"
-                  >
-                    <social.icon className="w-6 h-6 text-gray-400 hover:text-white transition-colors duration-300" />
-                  </motion.a>
-                ))}
-              </div>
-            </div>
+
 
                          {/* Office Hours */}
              <div className="bg-dark-800/30 border border-dark-700 rounded-lg p-6">
