@@ -54,14 +54,15 @@ const About = () => {
   ]
 
   return (
-    <section id="about" className="section-padding gradient-bg">
+    <section id="about" className="section-padding gradient-bg overflow-x-hidden">
       <div className="container-custom">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Column - Content */}
           <motion.div
             ref={ref}
-            initial={{ opacity: 0, x: -50 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
+            initial={false}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.8 }}
             className="space-y-8"
           >
@@ -147,8 +148,9 @@ const About = () => {
 
           {/* Right Column - Stats & Visual */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
+            initial={false}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="space-y-8"
           >

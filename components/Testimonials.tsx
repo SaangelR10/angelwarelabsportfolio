@@ -62,12 +62,31 @@ const Testimonials = () => {
     }
   ]
 
-  // Auto-advance carousel
+  // Auto-advance carousel con pausa en hover/focus y reduced motion
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length)
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mediaQuery.matches) return
+    let paused = false
+    const interval = setInterval(() => {
+      if (!paused) setCurrentIndex((prev) => (prev + 1) % testimonials.length)
     }, 5000)
-    return () => clearInterval(timer)
+    const container = document.getElementById('testimonials-carousel')
+    if (container) {
+      const onEnter = () => { paused = true }
+      const onLeave = () => { paused = false }
+      container.addEventListener('mouseenter', onEnter)
+      container.addEventListener('focusin', onEnter)
+      container.addEventListener('mouseleave', onLeave)
+      container.addEventListener('focusout', onLeave)
+      return () => {
+        clearInterval(interval)
+        container.removeEventListener('mouseenter', onEnter)
+        container.removeEventListener('focusin', onEnter)
+        container.removeEventListener('mouseleave', onLeave)
+        container.removeEventListener('focusout', onLeave)
+      }
+    }
+    return () => clearInterval(interval)
   }, [testimonials.length])
 
   const nextSlide = () => {
@@ -83,13 +102,14 @@ const Testimonials = () => {
   }
 
   return (
-    <section id="testimonials" className="section-padding gradient-bg">
+    <section id="testimonials" className="section-padding gradient-bg overflow-x-hidden">
       <div className="container-custom">
         {/* Section Header */}
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          initial={false}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
@@ -108,6 +128,7 @@ const Testimonials = () => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, duration: 0.8 }}
           className="relative max-w-4xl mx-auto"
+          id="testimonials-carousel"
         >
           {/* Main Testimonial */}
           <div className="relative bg-dark-800/50 backdrop-blur-sm border border-dark-700 rounded-2xl p-8 lg:p-12">
@@ -167,7 +188,8 @@ const Testimonials = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-dark-700/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-primary-500 transition-colors duration-300"
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-dark-700/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-primary-500 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              aria-label="Anterior testimonio"
             >
               <ChevronLeft className="w-6 h-6 text-white" />
             </motion.button>
@@ -176,7 +198,8 @@ const Testimonials = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-dark-700/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-primary-500 transition-colors duration-300"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-dark-700/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-primary-500 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              aria-label="Siguiente testimonio"
             >
               <ChevronRight className="w-6 h-6 text-white" />
             </motion.button>
@@ -195,6 +218,7 @@ const Testimonials = () => {
                     ? 'bg-primary-500 scale-125'
                     : 'bg-dark-600 hover:bg-dark-500'
                 }`}
+                aria-label={`Ir al testimonio ${index + 1}`}
               />
             ))}
           </div>

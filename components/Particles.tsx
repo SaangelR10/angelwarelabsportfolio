@@ -18,6 +18,9 @@ const Particles = () => {
   const animationRef = useRef<number>()
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const reduceMotion = mediaQuery.matches
+
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -43,7 +46,8 @@ const Particles = () => {
 
     // Initialize particles
     const initParticles = () => {
-      const particleCount = Math.max(50, Math.min(window.innerWidth / 15, 150)) // More particles, better distribution
+      const maxCount = reduceMotion ? 40 : 150
+      const particleCount = Math.max(20, Math.min(window.innerWidth / (reduceMotion ? 30 : 15), maxCount))
       particlesRef.current = []
 
       for (let i = 0; i < particleCount; i++) {
@@ -65,8 +69,9 @@ const Particles = () => {
 
       particlesRef.current.forEach((particle, index) => {
         // Update position
-        particle.x += particle.vx
-        particle.y += particle.vy
+        const speedFactor = reduceMotion ? 0.3 : 1
+        particle.x += particle.vx * speedFactor
+        particle.y += particle.vy * speedFactor
 
         // Wrap around edges
         if (particle.x < 0) particle.x = canvas.width
@@ -91,7 +96,7 @@ const Particles = () => {
           const dy = particle.y - otherParticle.y
           const distance = Math.sqrt(dx * dx + dy * dy)
 
-          if (distance < 120) { // Slightly larger connection distance
+          if (!reduceMotion && distance < 120) {
             ctx.save()
             ctx.globalAlpha = (120 - distance) / 120 * 0.15 // More visible connections
             ctx.strokeStyle = particle.color
@@ -109,24 +114,27 @@ const Particles = () => {
     }
 
     initParticles()
-    animate()
+    let visibilityHandler: (() => void) | null = null
+    const start = () => { if (!animationRef.current) animate() }
+    const stop = () => { if (animationRef.current) { cancelAnimationFrame(animationRef.current); animationRef.current = undefined }
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stop(); else start()
+    })
+    start()
 
     return () => {
       window.removeEventListener('resize', resizeCanvas)
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
+      stop()
     }
   }, [])
 
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
+      className="fixed inset-0 pointer-events-none z-0 block"
       style={{
-        background: 'transparent',
-        width: '100vw',
-        height: '100vh'
+        background: 'transparent'
       }}
     />
   )

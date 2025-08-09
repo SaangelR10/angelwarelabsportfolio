@@ -41,18 +41,25 @@ const Contact = () => {
   } = useForm<FormData>()
 
   const onSubmit = async (data: FormData) => {
-    setIsSubmitting(true)
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    console.log('Form submitted:', data)
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    reset()
-    
-    // Reset success message after 5 seconds
-    setTimeout(() => setIsSubmitted(false), 5000)
+    try {
+      setIsSubmitting(true)
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      const json = await res.json()
+      if (!res.ok || !json.ok) {
+        throw new Error(json.error || 'No se pudo enviar el mensaje')
+      }
+      setIsSubmitted(true)
+      reset()
+      setTimeout(() => setIsSubmitted(false), 5000)
+    } catch (e) {
+      alert((e as Error).message)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const contactInfo = [

@@ -6,9 +6,11 @@ const LoadingScreen = () => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const duration = mediaQuery.matches ? 0 : 900
     const timer = setTimeout(() => {
       setIsLoading(false)
-    }, 3000)
+    }, duration)
 
     return () => clearTimeout(timer)
   }, [])

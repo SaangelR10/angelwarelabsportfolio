@@ -3,6 +3,7 @@ import Hero from '@/components/Hero'
 import Services from '@/components/Services'
 import Portfolio from '@/components/Portfolio'
 import About from '@/components/About'
+import ClientLogos from '@/components/ClientLogos'
 import Team from '@/components/Team'
 import Testimonials from '@/components/Testimonials'
 import Contact from '@/components/Contact'
@@ -11,10 +12,11 @@ import NavigationManager from '@/components/NavigationManager'
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen overflow-x-hidden">
       <Header />
       <Hero />
       <Services />
+      <ClientLogos />
       <Portfolio />
       <About />
       <Testimonials />

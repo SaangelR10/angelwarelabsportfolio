@@ -81,7 +81,7 @@ const PageTransition = ({ children, isVisible, onClose, direction = 'right' }: P
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm overflow-x-hidden"
           onClick={handleClose}
         >
           <motion.div

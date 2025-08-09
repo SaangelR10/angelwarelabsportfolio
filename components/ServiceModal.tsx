@@ -110,8 +110,11 @@ const ServiceModal = ({ isOpen, onClose, service }: ServiceModalProps) => {
           initial="hidden"
           animate="visible"
           exit="hidden"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-x-hidden"
           onClick={onClose}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="service-modal-title"
         >
           <motion.div
             variants={contentVariants}
@@ -120,6 +123,7 @@ const ServiceModal = ({ isOpen, onClose, service }: ServiceModalProps) => {
             exit="exit"
             className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-dark-800/95 backdrop-blur-xl border border-dark-700 rounded-2xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
+            tabIndex={-1}
           >
             {/* Header */}
             <div className="sticky top-0 z-10 bg-dark-800/95 backdrop-blur-xl border-b border-dark-700 rounded-t-2xl p-6">
@@ -129,7 +133,7 @@ const ServiceModal = ({ isOpen, onClose, service }: ServiceModalProps) => {
                     <service.icon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-white">
+                    <h2 id="service-modal-title" className="text-2xl sm:text-3xl font-bold text-white">
                       {service.title}
                     </h2>
                     <p className="text-gray-400 text-sm sm:text-base">

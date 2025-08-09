@@ -248,13 +248,14 @@ const Services = () => {
   }, [services])
 
   return (
-    <section id="services" className="section-padding gradient-bg">
+    <section id="services" className="section-padding gradient-bg overflow-x-hidden">
       <div className="container-custom">
         {/* Section Header */}
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          initial={false}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
@@ -271,7 +272,8 @@ const Services = () => {
         <motion.div
           variants={containerVariants}
           initial="hidden"
-          animate={inView ? "visible" : "hidden"}
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {services.map((service, index) => (
@@ -308,54 +310,16 @@ const Services = () => {
                 ))}
               </div>
 
-              {/* CTA */}
-              <div 
-                className="flex items-center space-x-2 text-primary-400 hover:text-primary-300 transition-colors duration-300 group-hover:translate-x-2 transition-transform duration-300 cursor-pointer touch-manipulation p-3 rounded-lg hover:bg-primary-500/10 active:bg-primary-500/20"
-                style={{ 
-                  WebkitTapHighlightColor: 'transparent',
-                  WebkitUserSelect: 'none',
-                  userSelect: 'none',
-                  minHeight: '44px',
-                  minWidth: '44px',
-                  position: 'relative',
-                  zIndex: 10
-                }}
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  console.log('DIV CLICKED!', service.title)
-                  handleServiceClick(service)
-                }}
-                onTouchStart={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  console.log('TOUCH START!', service.title)
-                  handleServiceClick(service)
-                }}
-                onTouchEnd={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  console.log('TOUCH END!', service.title)
-                  handleServiceClick(service)
-                }}
-                onMouseDown={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  console.log('MOUSE DOWN!', service.title)
-                  handleServiceClick(service)
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    handleServiceClick(service)
-                  }
-                }}
+              {/* CTA accesible */}
+              <button
+                type="button"
+                onClick={() => handleServiceClick(service)}
+                className="flex items-center space-x-2 text-primary-400 hover:text-primary-300 transition-colors duration-300 group-hover:translate-x-2 transition-transform duration-300 p-3 rounded-lg hover:bg-primary-500/10 active:bg-primary-500/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                aria-label={`Saber más sobre ${service.title}`}
               >
                 <span className="text-sm font-medium">Saber más</span>
-                <ArrowRight className="w-4 h-4" />
-              </div>
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </button>
 
               {/* Hover Effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-accent-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -365,9 +329,10 @@ const Services = () => {
 
         {/* CTA Section */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.8, duration: 0.8 }}
+          initial={false}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
           className="text-center mt-16"
         >
           <motion.button
@@ -381,22 +346,24 @@ const Services = () => {
         </motion.div>
       </div>
 
-      {/* Service Modal */}
+      {/* Modal (uno u otro segun viewport) */}
       {selectedService && (
-        <ServiceModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          service={selectedService}
-        />
-      )}
-      
-      {/* Mobile Modal */}
-      {selectedService && (
-        <MobileModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          service={selectedService}
-        />
+        <>
+          <div className="hidden sm:block">
+            <ServiceModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              service={selectedService}
+            />
+          </div>
+          <div className="sm:hidden">
+            <MobileModal
+              isOpen={isModalOpen}
+              onClose={handleCloseModal}
+              service={selectedService}
+            />
+          </div>
+        </>
       )}
       
       

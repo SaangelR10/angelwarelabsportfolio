@@ -34,8 +34,11 @@ const MobileModal = ({ isOpen, onClose, service }: MobileModalProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/90"
+          className="fixed inset-0 z-[9999] flex items-end sm:items-center justify-center bg-black/90 overflow-x-hidden"
           onClick={onClose}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mobile-service-modal-title"
         >
           <motion.div
             initial={{ y: 100, opacity: 0 }}
@@ -45,6 +48,7 @@ const MobileModal = ({ isOpen, onClose, service }: MobileModalProps) => {
             className="relative w-full max-w-md mx-4 bg-dark-800 border border-dark-700 rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden"
             style={{ maxHeight: '90vh' }}
             onClick={(e) => e.stopPropagation()}
+            tabIndex={-1}
           >
             {/* Header */}
             <div className="sticky top-0 bg-dark-800/95 border-b border-dark-700 p-4 sm:p-6">
@@ -54,7 +58,7 @@ const MobileModal = ({ isOpen, onClose, service }: MobileModalProps) => {
                     {ServiceIcon && <ServiceIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />}
                   </div>
                   <div>
-                    <h2 className="text-lg sm:text-2xl font-bold text-white">
+                    <h2 id="mobile-service-modal-title" className="text-lg sm:text-2xl font-bold text-white">
                       {service.title}
                     </h2>
                     <p className="text-gray-400 text-xs sm:text-sm">

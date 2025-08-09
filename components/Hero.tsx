@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Play, Star } from 'lucide-react'
 
 const Hero = () => {
@@ -11,19 +11,21 @@ const Hero = () => {
     }
   }
 
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <section id="hero" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900" />
       
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden will-change-transform">
         <motion.div
-          animate={{
+          animate={shouldReduceMotion ? undefined : {
             scale: [1, 1.2, 1],
             rotate: [0, 180, 360],
           }}
-          transition={{
+          transition={shouldReduceMotion ? undefined : {
             duration: 20,
             repeat: Infinity,
             ease: "linear"
@@ -31,11 +33,11 @@ const Hero = () => {
           className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-full blur-3xl"
         />
         <motion.div
-          animate={{
+          animate={shouldReduceMotion ? undefined : {
             scale: [1.2, 1, 1.2],
             rotate: [360, 180, 0],
           }}
-          transition={{
+          transition={shouldReduceMotion ? undefined : {
             duration: 25,
             repeat: Infinity,
             ease: "linear"
@@ -44,7 +46,7 @@ const Hero = () => {
         />
       </div>
 
-      <div className="container-custom relative z-10 text-center pt-16">
+      <div className="container-custom relative z-10 text-center pt-16 overflow-x-hidden will-change-transform">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

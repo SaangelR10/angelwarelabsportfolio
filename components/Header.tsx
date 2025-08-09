@@ -36,7 +36,7 @@ const Header = () => {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 overflow-x-hidden ${
         isScrolled
           ? 'bg-dark-900/95 backdrop-blur-md border-b border-dark-700'
           : 'bg-transparent'
@@ -86,7 +86,10 @@ const Header = () => {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg bg-dark-800/50 backdrop-blur-sm border border-dark-600"
+            className="lg:hidden p-2 rounded-lg bg-dark-800/50 backdrop-blur-sm border border-dark-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            aria-controls="primary-navigation"
+            aria-expanded={isMobileMenuOpen}
+            aria-label={isMobileMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
           >
             {isMobileMenuOpen ? (
               <X className="w-6 h-6 text-white" />
@@ -104,6 +107,7 @@ const Header = () => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="lg:hidden bg-dark-800/95 backdrop-blur-md rounded-lg mt-2 overflow-hidden border border-dark-600"
+              id="primary-navigation"
             >
               <div className="py-4 space-y-2">
                 {navItems.map((item) => (

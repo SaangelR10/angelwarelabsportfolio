@@ -1,0 +1,163 @@
+Lista de correcciones y mejoras - Angelware Labs Portfolio
+
+Leyenda de prioridad:
+- P0: Crítico (impacto directo en conversión/UX/accesibilidad)
+- P1: Alto (rendimiento, SEO y calidad técnica)
+- P2: Medio (contenido de ventas, arquitectura de navegación)
+- P3: Bajo (polish visual y consistencia)
+
+====================================================================
+P0 - Crítico
+====================================================================
+1) Fuentes duplicadas y CLS
+- Problema: Se carga "Inter" vía next/font y también vía @import; JetBrains Mono solo vía @import.
+- Archivos: app/globals.css, app/layout.tsx
+- Acción:
+  a. Quitar @import de fuentes en app/globals.css.
+  b. Añadir JetBrains_Mono con next/font en app/layout.tsx y usarlo cuando sea necesario.
+- Criterio de aceptación: No existen @import de Google Fonts; CLS reducido; fonts precargadas por next/font.
+
+2) Modales de servicios duplicados (overlay doble)
+- Problema: Se montan a la vez ServiceModal y MobileModal.
+- Archivo: components/Services.tsx
+- Acción:
+  a. Render condicional por breakpoint/hook (p. ej., useIsMobile) para montar solo uno.
+  b. Evitar condiciones simultáneas; un único modal activo.
+- Criterio de aceptación: Nunca hay dos overlays; navegación/foco coherentes.
+
+3) Accesibilidad mínima en modales y navegación
+- Problemas: Falta role="dialog" y aria-modal en modales; sin focus trap; menú móvil sin aria-expanded/aria-controls; botones icónicos sin aria-label.
+- Archivos: components/ServiceModal.tsx, components/MobileModal.tsx, components/Portfolio.tsx, components/Header.tsx
+- Acción:
+  a. Añadir role="dialog" aria-modal="true" y focus trap + return focus en ambos modales.
+  b. Añadir aria-expanded/aria-controls al botón de menú móvil.
+  c. Añadir aria-label a icon buttons (portfolio y redes sociales).
+- Criterio de aceptación: Lighthouse Accessibility ≥ 95; navegación por teclado completa.
+
+4) Pantalla de carga bloqueante
+- Problema: LoadingScreen fuerza 3s, retrasa TTI.
+- Archivo: components/LoadingScreen.tsx
+- Acción:
+  a. Reducir a ≤ 1000 ms y condicionar por primer render.
+  b. Respetar prefers-reduced-motion y permitir desactivarla en producción.
+- Criterio de aceptación: El contenido es interactivo sin espera artificial; no se fuerza animación si el usuario la desactiva.
+
+5) Formulario de contacto sin envío real
+- Problema: Simulación con setTimeout; sin backend ni manejo de error real.
+- Archivos: components/Contact.tsx (+ nueva ruta API)
+- Acción:
+  a. Crear app/api/contact/route.ts con validación y envío (Resend/Nodemailer).
+  b. Mostrar estados de éxito/error reales; deshabilitar botón mientras envía.
+- Criterio de aceptación: Envío funcional; errores manejados; notificación en correo/CRM.
+
+====================================================================
+P1 - Alto
+====================================================================
+6) Target/lib de TypeScript desactualizado
+- Problema: "target": "es5" y lib antigua.
+- Archivo: tsconfig.json
+- Acción: Cambiar a "target": "es2020" y "lib": ["dom", "dom.iterable", "esnext"].
+- Criterio de aceptación: Build estable, bundle sin polyfills innecesarios.
+
+7) CTA con múltiples handlers y console.logs
+- Problema: Exceso de onClick/onTouch/onMouse y logs en CTA de Services → posibles gestos fantasma.
+- Archivo: components/Services.tsx
+- Acción: Consolidar en un único button semántico y un handler; eliminar logs.
+- Criterio de aceptación: Sin eventos duplicados ni logs en producción.
+
+8) Animaciones y partículas sin prefers-reduced-motion
+- Problema: Animaciones siempre activas; canvas permanente.
+- Archivos: components/Hero.tsx, components/Particles.tsx, components/Testimonials.tsx
+- Acción:
+  a. Respetar prefers-reduced-motion en Framer Motion (reduce/disable).
+  b. En Particles: throttle, densidad por breakpoint, pause en tab inactivo, DPR-aware.
+- Criterio de aceptación: CPU/GPU bajo en dispositivos modestos; animaciones desactivables.
+
+9) Carrusel de testimonios - controles y accesibilidad
+- Problema: Auto-advance sin pause/hover, sin aria-label en controles.
+- Archivo: components/Testimonials.tsx
+- Acción: Pausa al hover/focus, aria-label en flechas y dots, opción de reducir movimiento.
+- Criterio de aceptación: Control total por teclado/lectores; sin mareos.
+
+10) SEO básico incompleto
+- Problema: Falta og:image/twitter:image, canonical, icons completos, robots/sitemap, JSON-LD.
+- Archivos: app/layout.tsx, next.config.js (+ config de next-sitemap)
+- Acción:
+  a. Añadir openGraph.images y twitter.images; themeColor.
+  b. Configurar next-sitemap para sitemap.xml y robots.txt.
+  c. Añadir JSON-LD (Organization y Service) en layout o por sección.
+- Criterio de aceptación: Pages indexadas con rich results; sin warnings en validadores.
+
+====================================================================
+P2 - Medio
+====================================================================
+11) Contenido de ventas y prueba social avanzada
+- Problema: Falta logos de clientes, casos de estudio con métricas, badges/certificaciones.
+- Archivos: components/Portfolio.tsx (+ nueva sección/route "casos")
+- Acción: Añadir grid de logos, 2–3 mini-casos con problema→solución→resultado (%/KPI), badges (ej. AWS, GCP).
+- Criterio de aceptación: Mayor credibilidad; sección "Casos" navegable.
+
+12) Enlaces sociales y de contacto reales
+- Problema: href="#" en Footer/Contact.
+- Archivos: components/Footer.tsx, components/Contact.tsx
+- Acción: Sustituir por URLs reales de marca (GitHub, LinkedIn, etc.).
+- Criterio de aceptación: Todos los enlaces llevan a perfiles/pages correctos.
+
+13) Navegación a páginas internas
+- Problema: NavigationManager custom; escalabilidad limitada.
+- Archivos: components/NavigationManager.tsx (+ rutas)
+- Acción: Migrar a rutas/modales nativos de Next (segmentos paralelos) si se planean más páginas internas.
+- Criterio de aceptación: Historial/back/refresh coherentes; menos JS ad-hoc.
+
+====================================================================
+P3 - Bajo (polish visual)
+====================================================================
+14) Tokens de color y acentos menos saturados
+- Problema: Gradientes/acento pueden percibirse "neón".
+- Archivos: tailwind.config.js, app/globals.css
+- Acción: Atenuar saturación, usar opacidades bajas, mantener tema oscuro premium.
+- Criterio de aceptación: Estética sobria y profesional consistente.
+
+15) Consistencia de sombras, radios y escalas
+- Problema: hover:scale-105 y sombras fuertes en muchas tarjetas.
+- Archivos: app/globals.css, componentes con "card-hover"
+- Acción: Reducir escala a ≤ 1.02, sombras sutiles, radios unificados.
+- Criterio de aceptación: Interacciones discretas, percepción premium.
+
+16) Datos tipados y desacoplados
+- Problema: Datos de servicios/proyectos hardcodeados en componentes.
+- Archivos: components/Services.tsx, components/Portfolio.tsx (+ nuevos en /data)
+- Acción: Extraer a /data/services.ts y /data/projects.ts con tipos TS; componentes puros.
+- Criterio de aceptación: Mejor mantenibilidad y reutilización.
+
+====================================================================
+Tareas concretas por archivo (checklist)
+====================================================================
+[ ] app/globals.css → Eliminar @import de Google Fonts.
+[ ] app/layout.tsx → Añadir JetBrains_Mono con next/font; agregar openGraph.images, twitter.images, themeColor, icons, canonical.
+[ ] components/Services.tsx → Render condicional de un solo modal; consolidar CTA en <button>; eliminar console.log; hash handling sin side-effects.
+[ ] components/ServiceModal.tsx → role="dialog" aria-modal, focus trap, return focus, aria-labelledby.
+[ ] components/MobileModal.tsx → role="dialog" aria-modal, focus trap, return focus, aria-labelledby.
+[ ] components/Header.tsx → Botón menú con aria-expanded/aria-controls; foco visible.
+[ ] components/Portfolio.tsx → aria-label en icon links; titles/descriptions adecuados.
+[ ] components/LoadingScreen.tsx → Timeout ≤ 1000ms; respetar prefers-reduced-motion; opción de desactivar en prod.
+[ ] components/Particles.tsx → prefers-reduced-motion; throttling; DPR-aware; pause en tab oculta.
+[ ] components/Testimonials.tsx → Pausa on hover/focus; aria-label en flechas y dots; reduced-motion.
+[ ] tsconfig.json → target es2020; lib esnext.
+[ ] next.config.js → Preparar next-sitemap; validar domains de imágenes si añadimos og:image remota.
+[ ] app/api/contact/route.ts (nuevo) → Validación, envío (Resend/Nodemailer), rate-limit básico.
+[ ] components/Contact.tsx → Conectar con ruta API; manejar errores; toasts/estado accesible.
+[ ] components/Footer.tsx / Contact.tsx → Reemplazar href="#" por URLs reales.
+[ ] /data/services.ts y /data/projects.ts (nuevos) → Tipos TS + datos; actualizar componentes.
+
+====================================================================
+Orden sugerido de ejecución (por lotes)
+====================================================================
+Lote 1 (P0): Fuentes, modales (uno solo), A11y mínima, LoadingScreen ≤ 1s, formulario con API.
+Lote 2 (P1): TS target/lib, limpieza handlers/logs, prefers-reduced-motion, carrusel accesible, SEO pack.
+Lote 3 (P2): Prueba social avanzada, enlaces reales, navegación con rutas.
+Lote 4 (P3): Tokens de color, microinteracciones sutiles, datos tipados en /data.
+
+Notas finales
+- Tras cada lote: pasar Lighthouse (Performance/Accessibility/Best Practices/SEO), revisar Core Web Vitals y ajustar.
+- Ajustes visuales finales dependerán de las referencias de diseño que enviarás.

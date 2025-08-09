@@ -30,8 +30,8 @@ const Portfolio = () => {
       image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop',
       description: 'Plataforma de comercio electrónico completa con React, Node.js y Stripe.',
       technologies: ['React', 'Node.js', 'Stripe', 'MongoDB'],
-      liveUrl: '#',
-      githubUrl: '#',
+      liveUrl: 'https://angelwarelabs.com/',
+      githubUrl: 'https://github.com/',
       featured: true
     },
     {
@@ -41,8 +41,8 @@ const Portfolio = () => {
       image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop',
       description: 'Sistema integral de gestión empresarial con dashboard en tiempo real.',
       technologies: ['Next.js', 'TypeScript', 'PostgreSQL', 'Prisma'],
-      liveUrl: '#',
-      githubUrl: '#',
+      liveUrl: 'https://angelwarelabs.com/',
+      githubUrl: 'https://github.com/',
       featured: true
     },
     {
@@ -52,8 +52,8 @@ const Portfolio = () => {
       image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&h=400&fit=crop',
       description: 'Aplicación móvil de delivery con geolocalización y pagos integrados.',
       technologies: ['React Native', 'Firebase', 'Google Maps', 'Stripe'],
-      liveUrl: '#',
-      githubUrl: '#',
+      liveUrl: 'https://angelwarelabs.com/',
+      githubUrl: 'https://github.com/',
       featured: false
     },
     {
@@ -63,8 +63,8 @@ const Portfolio = () => {
       image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop',
       description: 'Portal web corporativo con CMS personalizado y diseño responsivo.',
       technologies: ['React', 'Strapi', 'Tailwind CSS', 'Vercel'],
-      liveUrl: '#',
-      githubUrl: '#',
+      liveUrl: 'https://angelwarelabs.com/',
+      githubUrl: 'https://github.com/',
       featured: false
     },
     {
@@ -74,8 +74,8 @@ const Portfolio = () => {
       image: 'https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=600&h=400&fit=crop',
       description: 'Plataforma de streaming con transcodificación de video y CDN.',
       technologies: ['Next.js', 'AWS', 'FFmpeg', 'Redis'],
-      liveUrl: '#',
-      githubUrl: '#',
+      liveUrl: 'https://angelwarelabs.com/',
+      githubUrl: 'https://github.com/',
       featured: false
     },
     {
@@ -118,13 +118,14 @@ const Portfolio = () => {
   }
 
   return (
-    <section id="portfolio" className="section-padding gradient-bg">
+    <section id="portfolio" className="section-padding gradient-bg overflow-x-hidden">
       <div className="container-custom">
         {/* Section Header */}
         <motion.div
           ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          initial={false}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
@@ -165,7 +166,8 @@ const Portfolio = () => {
         <motion.div
           variants={containerVariants}
           initial="hidden"
-          animate={inView ? "visible" : "hidden"}
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.15 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           <AnimatePresence mode="wait">
@@ -196,17 +198,19 @@ const Portfolio = () => {
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       href={project.liveUrl}
-                      className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors duration-300"
+                      className="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                      aria-label={`Ver sitio en vivo: ${project.title}`}
                     >
-                      <ExternalLink className="w-5 h-5 text-white" />
+                      <ExternalLink className="w-5 h-5 text-white" aria-hidden="true" />
                     </motion.a>
                     <motion.a
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       href={project.githubUrl}
-                      className="w-12 h-12 bg-dark-700 rounded-full flex items-center justify-center hover:bg-dark-600 transition-colors duration-300"
+                      className="w-12 h-12 bg-dark-700 rounded-full flex items-center justify-center hover:bg-dark-600 transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+                      aria-label={`Ver repositorio: ${project.title}`}
                     >
-                      <Github className="w-5 h-5 text-white" />
+                      <Github className="w-5 h-5 text-white" aria-hidden="true" />
                     </motion.a>
                   </div>
 
@@ -257,9 +261,10 @@ const Portfolio = () => {
 
         {/* CTA Section */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.8, duration: 0.8 }}
+          initial={false}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
           className="text-center mt-16"
         >
           <motion.button
