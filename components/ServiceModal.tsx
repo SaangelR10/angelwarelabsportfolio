@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ArrowRight, CheckCircle, Star, Clock, Users, Zap, Shield, Code, Database, Globe, Smartphone } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface ServiceModalProps {
   isOpen: boolean
@@ -28,6 +28,8 @@ interface ServiceModalProps {
 }
 
 const ServiceModal = ({ isOpen, onClose, service }: ServiceModalProps) => {
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const lastFocusedRef = useRef<HTMLElement | null>(null)
   // Close modal on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -35,13 +37,23 @@ const ServiceModal = ({ isOpen, onClose, service }: ServiceModalProps) => {
     }
     
     if (isOpen) {
+      lastFocusedRef.current = (document.activeElement as HTMLElement) || null
       document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
+      const app = document.getElementById('app-content')
+      if (app) app.setAttribute('aria-hidden', 'true')
+      // Focus first focusable
+      setTimeout(() => {
+        dialogRef.current?.focus()
+      }, 0)
     }
     
     return () => {
       document.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = 'unset'
+      const app = document.getElementById('app-content')
+      if (app) app.removeAttribute('aria-hidden')
+      lastFocusedRef.current?.focus()
     }
   }, [isOpen, onClose])
 
@@ -124,6 +136,27 @@ const ServiceModal = ({ isOpen, onClose, service }: ServiceModalProps) => {
             className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-dark-800/95 backdrop-blur-xl border border-dark-700 rounded-2xl shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             tabIndex={-1}
+            ref={dialogRef}
+            onKeyDown={(e) => {
+              if (e.key !== 'Tab') return
+              const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+                'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
+              )
+              if (!focusable || focusable.length === 0) return
+              const first = focusable[0]
+              const last = focusable[focusable.length - 1]
+              if (e.shiftKey) {
+                if (document.activeElement === first) {
+                  e.preventDefault()
+                  last.focus()
+                }
+              } else {
+                if (document.activeElement === last) {
+                  e.preventDefault()
+                  first.focus()
+                }
+              }
+            }}
           >
             {/* Header */}
             <div className="sticky top-0 z-10 bg-dark-800/95 backdrop-blur-xl border-b border-dark-700 rounded-t-2xl p-6">

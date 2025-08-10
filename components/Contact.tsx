@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { useForm } from 'react-hook-form'
@@ -43,10 +43,28 @@ const Contact = () => {
   const onSubmit = async (data: FormData) => {
     try {
       setIsSubmitting(true)
+      let token: string | undefined
+      // Obtener token de reCAPTCHA v3 si está disponible
+      // @ts-ignore
+      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+      const isProd = process.env.NODE_ENV === 'production'
+      // @ts-ignore
+      const gre = typeof window !== 'undefined' ? window.grecaptcha : undefined
+      if (gre && siteKey && isProd) {
+        token = await new Promise<string | undefined>((resolve) => {
+          // @ts-ignore
+          gre.ready(() => {
+            // @ts-ignore
+            gre.execute(siteKey, { action: 'contact' })
+              .then((t: string) => resolve(t))
+              .catch(() => resolve(undefined))
+          })
+        })
+      }
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ ...data, token })
       })
       const json = await res.json()
       if (!res.ok || !json.ok) {
@@ -145,12 +163,13 @@ const Contact = () => {
             </AnimatePresence>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6" aria-live="polite">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label htmlFor="contact-name" className="block text-sm font-medium text-gray-300 mb-2">
                     Nombre *
                   </label>
                   <input
+                    id="contact-name"
                     {...register('name', { required: 'El nombre es requerido' })}
                     type="text"
                     className="w-full px-4 py-3 bg-dark-800/50 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors duration-300"
@@ -162,10 +181,11 @@ const Contact = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label htmlFor="contact-email" className="block text-sm font-medium text-gray-300 mb-2">
                     Email *
                   </label>
                   <input
+                    id="contact-email"
                     {...register('email', { 
                       required: 'El email es requerido',
                       pattern: {
@@ -184,10 +204,11 @@ const Contact = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="contact-company" className="block text-sm font-medium text-gray-300 mb-2">
                   Empresa
                 </label>
                 <input
+                  id="contact-company"
                   {...register('company')}
                   type="text"
                   className="w-full px-4 py-3 bg-dark-800/50 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors duration-300"
@@ -196,10 +217,11 @@ const Contact = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="contact-message" className="block text-sm font-medium text-gray-300 mb-2">
                   Mensaje *
                 </label>
                 <textarea
+                  id="contact-message"
                   {...register('message', { required: 'El mensaje es requerido' })}
                   rows={6}
                   className="w-full px-4 py-3 bg-dark-800/50 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors duration-300 resize-none"

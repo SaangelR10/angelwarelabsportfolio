@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ArrowRight, CheckCircle, Star, Clock, Users, Zap } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface MobileModalProps {
   isOpen: boolean
@@ -11,15 +11,24 @@ interface MobileModalProps {
 }
 
 const MobileModal = ({ isOpen, onClose, service }: MobileModalProps) => {
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const lastFocusedRef = useRef<HTMLElement | null>(null)
   useEffect(() => {
     if (isOpen) {
+      lastFocusedRef.current = (document.activeElement as HTMLElement) || null
       document.body.style.overflow = 'hidden'
+      const app = document.getElementById('app-content')
+      if (app) app.setAttribute('aria-hidden', 'true')
+      setTimeout(() => dialogRef.current?.focus(), 0)
     } else {
       document.body.style.overflow = 'unset'
     }
 
     return () => {
       document.body.style.overflow = 'unset'
+      const app = document.getElementById('app-content')
+      if (app) app.removeAttribute('aria-hidden')
+      lastFocusedRef.current?.focus()
     }
   }, [isOpen])
 
@@ -49,6 +58,27 @@ const MobileModal = ({ isOpen, onClose, service }: MobileModalProps) => {
             style={{ maxHeight: '90vh' }}
             onClick={(e) => e.stopPropagation()}
             tabIndex={-1}
+            ref={dialogRef}
+            onKeyDown={(e) => {
+              if (e.key !== 'Tab') return
+              const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+                'a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'
+              )
+              if (!focusable || focusable.length === 0) return
+              const first = focusable[0]
+              const last = focusable[focusable.length - 1]
+              if (e.shiftKey) {
+                if (document.activeElement === first) {
+                  e.preventDefault()
+                  last.focus()
+                }
+              } else {
+                if (document.activeElement === last) {
+                  e.preventDefault()
+                  first.focus()
+                }
+              }
+            }}
           >
             {/* Header */}
             <div className="sticky top-0 bg-dark-800/95 border-b border-dark-700 p-4 sm:p-6">

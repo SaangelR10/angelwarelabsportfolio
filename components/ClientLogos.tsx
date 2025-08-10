@@ -1,18 +1,10 @@
 'use client'
 
 import Image from 'next/image'
+import { clientLogos } from '@/data/clients'
 
 // Logos de marcas reconocidas desde SimpleIcons CDN (SVG renderizado como PNG por Next Image)
-const logos = [
-  'https://cdn.simpleicons.org/google/ffffff',
-  'https://cdn.simpleicons.org/amazon/ffffff',
-  'https://cdn.simpleicons.org/microsoft/ffffff',
-  'https://cdn.simpleicons.org/ibm/ffffff',
-  'https://cdn.simpleicons.org/netflix/ffffff',
-  'https://cdn.simpleicons.org/spotify/ffffff',
-  'https://cdn.simpleicons.org/airbnb/ffffff',
-  'https://cdn.simpleicons.org/shopify/ffffff',
-]
+const logos = clientLogos
 
 const Row = ({ reverse = false }: { reverse?: boolean }) => {
   const items = [...logos, ...logos]

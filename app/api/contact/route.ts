@@ -8,14 +8,51 @@ function isValidEmail(email: string) {
 
 export async function POST(request: Request) {
   try {
+    // Rate limit en memoria (para producción, usar Redis/KV)
+    const ip = request.headers.get('x-forwarded-for') || 'unknown'
+    // @ts-ignore
+    globalThis.__rl = globalThis.__rl || new Map()
+    // @ts-ignore
+    const store = globalThis.__rl as Map<string, { count: number; ts: number }>
+    const now = Date.now()
+    const windowMs = 60 * 1000
+    const limit = 5
+    const key = ip.split(',')[0].trim()
+    const entry = store.get(key)
+    if (!entry || now - entry.ts > windowMs) {
+      store.set(key, { count: 1, ts: now })
+    } else {
+      entry.count += 1
+      if (entry.count > limit) {
+        return NextResponse.json({ ok: false, error: 'Demasiados intentos. Intenta en 1 minuto.' }, { status: 429 })
+      }
+      store.set(key, entry)
+    }
+
     const body = await request.json()
-    const { name, email, company, message } = body || {}
+    const { name, email, company, message, token } = body || {}
 
     if (!name || !email || !message) {
       return NextResponse.json({ ok: false, error: 'Faltan campos requeridos.' }, { status: 400 })
     }
     if (!isValidEmail(email)) {
       return NextResponse.json({ ok: false, error: 'Email inválido.' }, { status: 400 })
+    }
+
+    // Verificación reCAPTCHA v3 (en producción si hay clave)
+    const secret = process.env.RECAPTCHA_SECRET_KEY
+    const isProd = process.env.NODE_ENV === 'production'
+    if (secret && isProd) {
+      if (!token) return NextResponse.json({ ok: false, error: 'Captcha faltante.' }, { status: 400 })
+      const verify = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ secret, response: token }),
+      })
+      const result = await verify.json()
+      if (!result.success || (typeof result.score === 'number' && result.score < 0.5)) {
+        return NextResponse.json({ ok: false, error: 'Captcha inválido.' }, { status: 400 })
+      }
     }
 
     // SMTP Gmail

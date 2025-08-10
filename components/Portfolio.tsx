@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { ExternalLink, Github, Eye } from 'lucide-react'
 import Image from 'next/image'
+import { projectsData } from '@/data/projects'
 
 const Portfolio = () => {
   const [ref, inView] = useInView({
@@ -22,78 +23,15 @@ const Portfolio = () => {
     { id: 'ecommerce', name: 'E-commerce' },
   ]
 
-  const projects = [
-    {
-      id: 1,
-      title: 'E-commerce Moderno',
-      category: 'ecommerce',
-      image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop',
-      description: 'Plataforma de comercio electrónico completa con React, Node.js y Stripe.',
-      technologies: ['React', 'Node.js', 'Stripe', 'MongoDB'],
-      liveUrl: 'https://angelwarelabs.com/',
-      githubUrl: 'https://github.com/',
-      featured: true
-    },
-    {
-      id: 2,
-      title: 'App de Gestión Empresarial',
-      category: 'fullstack',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop',
-      description: 'Sistema integral de gestión empresarial con dashboard en tiempo real.',
-      technologies: ['Next.js', 'TypeScript', 'PostgreSQL', 'Prisma'],
-      liveUrl: 'https://angelwarelabs.com/',
-      githubUrl: 'https://github.com/',
-      featured: true
-    },
-    {
-      id: 3,
-      title: 'App de Delivery',
-      category: 'mobile',
-      image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&h=400&fit=crop',
-      description: 'Aplicación móvil de delivery con geolocalización y pagos integrados.',
-      technologies: ['React Native', 'Firebase', 'Google Maps', 'Stripe'],
-      liveUrl: 'https://angelwarelabs.com/',
-      githubUrl: 'https://github.com/',
-      featured: false
-    },
-    {
-      id: 4,
-      title: 'Portal Corporativo',
-      category: 'web',
-      image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop',
-      description: 'Portal web corporativo con CMS personalizado y diseño responsivo.',
-      technologies: ['React', 'Strapi', 'Tailwind CSS', 'Vercel'],
-      liveUrl: 'https://angelwarelabs.com/',
-      githubUrl: 'https://github.com/',
-      featured: false
-    },
-    {
-      id: 5,
-      title: 'Plataforma de Streaming',
-      category: 'fullstack',
-      image: 'https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=600&h=400&fit=crop',
-      description: 'Plataforma de streaming con transcodificación de video y CDN.',
-      technologies: ['Next.js', 'AWS', 'FFmpeg', 'Redis'],
-      liveUrl: 'https://angelwarelabs.com/',
-      githubUrl: 'https://github.com/',
-      featured: false
-    },
-    {
-      id: 6,
-      title: 'App de Fitness',
-      category: 'mobile',
-      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop',
-      description: 'Aplicación de fitness con tracking de ejercicios y progreso personalizado.',
-      technologies: ['Flutter', 'Firebase', 'HealthKit', 'Google Fit'],
-      liveUrl: '#',
-      githubUrl: '#',
-      featured: false
-    }
-  ]
+  const projects = projectsData
 
-  const filteredProjects = activeFilter === 'todos' 
-    ? projects 
-    : projects.filter(project => project.category === activeFilter)
+  const allowedIds = filters.map(f => f.id)
+  const normalize = (s: string) => (s || '').trim().toLowerCase()
+  const safeFilter = allowedIds.includes(activeFilter) ? activeFilter : 'todos'
+  const filteredRaw = safeFilter === 'todos'
+    ? projects
+    : projects.filter(project => normalize(project.category) === normalize(safeFilter))
+  const filteredProjects = filteredRaw.length > 0 ? filteredRaw : projects
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -169,8 +107,9 @@ const Portfolio = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.15 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          key={activeFilter}
         >
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout">
             {filteredProjects.map((project) => (
               <motion.div
                 key={project.id}
@@ -253,6 +192,15 @@ const Portfolio = () => {
                     <Eye className="w-4 h-4" />
                     <span className="text-sm font-medium">Ver Proyecto</span>
                   </motion.button>
+                  <div className="mt-3">
+                    <button
+                      onClick={() => window.dispatchEvent(new Event('openConsultation'))}
+                      className="button-secondary text-sm"
+                      aria-label={`Agendar consulta sobre ${project.title}`}
+                    >
+                      Agendar Consulta
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             ))}
