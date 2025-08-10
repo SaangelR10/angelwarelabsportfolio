@@ -1,19 +1,27 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
     }
-    window.addEventListener('scroll', handleScroll)
+    // Ajuste inmediato del estado para evitar parpadeo inicial
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true } as AddEventListenerOptions)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    // Evitar flash inicial de estilos dependientes de scroll/transitions
+    setIsMounted(true)
   }, [])
 
   // Bloquear scroll cuando el menú móvil está abierto y cerrar con Escape
@@ -42,31 +50,23 @@ const Header = () => {
   }
 
   const navItems = [
-    { name: 'Inicio', href: 'hero' },
     { name: 'Servicios', href: 'services' },
-    { name: 'Marcas', href: 'clients' },
     { name: 'Portafolio', href: 'portfolio' },
-    { name: 'Casos', href: 'case-studies' },
-    { name: 'Proceso', href: 'process' },
-    { name: 'Precios', href: 'pricing' },
-    { name: 'FAQ', href: 'faq' },
     { name: 'Sobre Nosotros', href: 'about' },
-    { name: 'Testimonios', href: 'testimonials' },
-    { name: 'Contacto', href: 'contact' },
   ]
 
   return (
     <motion.header
       initial={false}
       animate={{ y: 0 }}
-      className={`sticky top-0 left-0 right-0 z-[9999] transition-all duration-300 overflow-x-hidden ${
+      className={`sticky top-0 left-0 right-0 z-[9999] ${isMounted ? 'transition-all duration-300' : ''} overflow-x-hidden ${
         isScrolled
           ? 'bg-dark-900/95 backdrop-blur-md border-b border-dark-700'
           : 'bg-transparent'
       }`}
     >
-      <div className="container-custom px-6 sm:px-8 lg:px-12">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+      <div className={`container-custom px-6 sm:px-8 lg:px-12 ${isMounted ? '' : 'transition-none'}`}> 
+        <div className="flex items-center justify-between h-16 lg:h-20 relative">
           {/* Logo */}
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -82,8 +82,8 @@ const Header = () => {
             </span>
           </motion.button>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-2 xl:space-x-3">
+          {/* Desktop Navigation - centered */}
+          <nav className="hidden lg:flex items-center space-x-2 xl:space-x-3 absolute left-1/2 -translate-x-1/2">
             {navItems.map((item) => (
               <motion.button
                 key={item.name}
@@ -95,15 +95,19 @@ const Header = () => {
                 {item.name}
               </motion.button>
             ))}
+          </nav>
+
+          {/* Desktop CTA on the right */}
+          <div className="hidden lg:flex items-center">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection('contact')}
-              className="button-primary ml-6"
+              className="button-primary"
             >
               Contáctanos
             </motion.button>
-          </nav>
+          </div>
 
           {/* Mobile CTA + Menu Button */}
           <div className="lg:hidden flex items-center gap-2">

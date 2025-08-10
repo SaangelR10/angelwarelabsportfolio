@@ -14,7 +14,10 @@ const Hero = () => {
   const shouldReduceMotion = useReducedMotion()
 
   return (
-    <section id="hero" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+    <section
+      id="hero"
+      className="min-h-[calc(100vh-4rem)] lg:min-h-[calc(100vh-5rem)] flex items-start justify-center relative overflow-hidden pt-0"
+    >
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900" />
       
@@ -46,12 +49,12 @@ const Hero = () => {
         />
       </div>
 
-      <div className="container-custom relative z-10 text-center pt-16 overflow-x-hidden">
+      <div className="container-custom relative z-10 text-center pt-6 md:pt-8 overflow-x-hidden">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="space-y-8"
+          className="space-y-6"
         >
           {/* Badge */}
           <motion.div
@@ -96,7 +99,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.8 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
           >
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -124,7 +127,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9, duration: 0.8 }}
-            className="grid grid-cols-2 sm:grid-cols-4 gap-8 pt-16 max-w-4xl mx-auto"
+            className="grid grid-cols-2 sm:grid-cols-4 gap-8 pt-10 max-w-4xl mx-auto"
           >
             {[
               { number: '50+', label: 'Proyectos Completados' },
@@ -156,7 +159,7 @@ const Hero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        className="absolute bottom-6 left-1/2 transform -translate-x-1/2"
       >
         <motion.div
           animate={{ y: [0, 10, 0] }}

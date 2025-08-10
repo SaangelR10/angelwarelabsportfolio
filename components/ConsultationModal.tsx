@@ -168,11 +168,26 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
     return '📎'
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', { selectedService, formData, uploadedFiles })
-    // Aquí iría la lógica para enviar el formulario
-    setStep(3)
+    try {
+      const res = await fetch('/api/consultation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          selectedService,
+          ...formData,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok || !data?.ok) {
+        alert(data?.error || 'No se pudo enviar la consulta. Intenta nuevamente.')
+        return
+      }
+      setStep(3)
+    } catch (error) {
+      alert('Error de red. Intenta nuevamente.')
+    }
   }
 
   const resetForm = () => {
