@@ -19,7 +19,7 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900" />
       
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden will-change-transform">
+      <div className="absolute inset-0 overflow-hidden">
         <motion.div
           animate={shouldReduceMotion ? undefined : {
             scale: [1, 1.2, 1],
@@ -46,7 +46,7 @@ const Hero = () => {
         />
       </div>
 
-      <div className="container-custom relative z-10 text-center pt-16 overflow-x-hidden will-change-transform">
+      <div className="container-custom relative z-10 text-center pt-16 overflow-x-hidden">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

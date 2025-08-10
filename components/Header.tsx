@@ -16,6 +16,23 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Bloquear scroll cuando el menú móvil está abierto y cerrar con Escape
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsMobileMenuOpen(false)
+    }
+    window.addEventListener('keydown', onEsc)
+    return () => {
+      window.removeEventListener('keydown', onEsc)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isMobileMenuOpen])
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
     if (element) {
@@ -40,9 +57,9 @@ const Header = () => {
 
   return (
     <motion.header
-      initial={{ y: -100 }}
+      initial={false}
       animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 overflow-x-hidden ${
+      className={`sticky top-0 left-0 right-0 z-[9999] transition-all duration-300 overflow-x-hidden ${
         isScrolled
           ? 'bg-dark-900/95 backdrop-blur-md border-b border-dark-700'
           : 'bg-transparent'
@@ -122,7 +139,7 @@ const Header = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <motion.aside
