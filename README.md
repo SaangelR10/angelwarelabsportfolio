@@ -99,3 +99,18 @@ Las contribuciones son bienvenidas. Por favor, abre un issue o pull request para
 
 Desarrollado con ❤️ por Angelware Labs
 
+## 📱 PWA
+
+- Manifest en `public/manifest.webmanifest` y registrado en `app/layout.tsx` mediante `manifest`.
+
+## 🧰 Entorno (SMTP y Captcha)
+
+- Variables a configurar (Vercel o `.env.local`):
+  - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`
+  - Opcional: `RECAPTCHA_SECRET_KEY`, `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`
+
+## 🧪 Endpoints API
+
+- `POST /api/contact`: envía correo al propietario y confirmación al usuario.
+- `POST /api/consultation`: notifica a `angelwarelabs@gmail.com` y al usuario con branding.
+
