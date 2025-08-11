@@ -12,7 +12,7 @@ yarn-error.log*
 out/
 build/
 dist/
-
+CONTEXTO_PROYECTO.txt
 # Environment variables
 .env
 .env.local
