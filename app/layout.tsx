@@ -5,6 +5,7 @@ import './globals.css'
 import ParticlesGate from '@/components/ParticlesGate'
 import GlobalConsultation from '@/components/GlobalConsultation'
 import LoadingScreen from '@/components/LoadingScreen'
+import AnalyticsConsent from '@/components/AnalyticsConsent'
 
 const inter = Inter({ subsets: ['latin'] })
 const jetbrainsMono = JetBrainsMono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
@@ -70,6 +71,7 @@ export default function RootLayout({
           {children}
         </div>
         <GlobalConsultation />
+        <AnalyticsConsent />
         {/* JSON-LD Organization y WebSite */}
         <script
           type="application/ld+json"
@@ -78,6 +80,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'Organization',
+              '@id': 'https://angelwarelabs.com/#organization',
               name: 'Angelware Labs',
               url: 'https://angelwarelabs.com',
               logo: 'https://angelwarelabs.com/og-image.jpg',
@@ -99,6 +102,7 @@ export default function RootLayout({
               '@type': 'WebSite',
               name: 'Angelware Labs',
               url: 'https://angelwarelabs.com',
+              publisher: { '@id': 'https://angelwarelabs.com/#organization' },
               potentialAction: {
                 '@type': 'SearchAction',
                 target: 'https://angelwarelabs.com/?q={search_term_string}',

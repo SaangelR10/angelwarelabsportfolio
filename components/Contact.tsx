@@ -32,6 +32,7 @@ const Contact = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const {
     register,
@@ -43,6 +44,7 @@ const Contact = () => {
   const onSubmit = async (data: FormData) => {
     try {
       setIsSubmitting(true)
+      setErrorMsg(null)
       let token: string | undefined
       // Obtener token de reCAPTCHA v3 si está disponible
       // @ts-ignore
@@ -74,7 +76,7 @@ const Contact = () => {
       reset()
       setTimeout(() => setIsSubmitted(false), 5000)
     } catch (e) {
-      alert((e as Error).message)
+      setErrorMsg((e as Error).message)
     } finally {
       setIsSubmitting(false)
     }
@@ -97,15 +99,15 @@ const Contact = () => {
       icon: MapPin,
       title: 'Ubicación',
       value: 'Cali, Colombia',
-      link: '#'
+      link: 'https://www.google.com/maps?q=Cali,+Colombia'
     }
   ]
 
   const socialLinks = [
-    { icon: Github, href: '#', label: 'GitHub' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Instagram, href: '#', label: 'Instagram' }
+    { icon: Github, href: 'https://github.com/angelwarelabs', label: 'GitHub' },
+    { icon: Linkedin, href: 'https://www.linkedin.com/company/angelwarelabs', label: 'LinkedIn' },
+    { icon: Twitter, href: 'https://twitter.com/angelwarelabs', label: 'Twitter' },
+    { icon: Instagram, href: 'https://instagram.com/angelware.labs', label: 'Instagram' }
   ]
 
   return (
@@ -153,6 +155,8 @@ const Contact = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
                   className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 flex items-center space-x-3"
+                  role="status"
+                  aria-live="polite"
                 >
                   <CheckCircle className="w-6 h-6 text-green-400" />
                   <span className="text-green-400">
@@ -161,6 +165,12 @@ const Contact = () => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {errorMsg && (
+              <div role="alert" aria-live="assertive" className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-red-400">
+                {errorMsg}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6" aria-live="polite">
@@ -174,9 +184,11 @@ const Contact = () => {
                     type="text"
                     className="w-full px-4 py-3 bg-dark-800/50 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors duration-300"
                     placeholder="Tu nombre completo"
+                    aria-invalid={!!errors.name}
+                    aria-describedby={errors.name ? 'contact-name-error' : undefined}
                   />
                   {errors.name && (
-                    <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>
+                    <p id="contact-name-error" className="text-red-400 text-sm mt-1">{errors.name.message}</p>
                   )}
                 </div>
 
@@ -196,9 +208,11 @@ const Contact = () => {
                     type="email"
                     className="w-full px-4 py-3 bg-dark-800/50 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors duration-300"
                     placeholder="tu@email.com"
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? 'contact-email-error' : undefined}
                   />
                   {errors.email && (
-                    <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
+                    <p id="contact-email-error" className="text-red-400 text-sm mt-1">{errors.email.message}</p>
                   )}
                 </div>
               </div>
@@ -226,9 +240,11 @@ const Contact = () => {
                   rows={6}
                   className="w-full px-4 py-3 bg-dark-800/50 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary-500 transition-colors duration-300 resize-none"
                   placeholder="Cuéntanos sobre tu proyecto..."
+                  aria-invalid={!!errors.message}
+                  aria-describedby={errors.message ? 'contact-message-error' : undefined}
                 />
                 {errors.message && (
-                  <p className="text-red-400 text-sm mt-1">{errors.message.message}</p>
+                  <p id="contact-message-error" className="text-red-400 text-sm mt-1">{errors.message.message}</p>
                 )}
               </div>
 
@@ -276,6 +292,7 @@ const Contact = () => {
                 <motion.a
                   key={info.title}
                   href={info.link}
+                  aria-label={`${info.title}: ${info.value}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ delay: 0.6 + index * 0.1, duration: 0.6 }}
@@ -290,6 +307,28 @@ const Contact = () => {
                   </div>
                 </motion.a>
               ))}
+            </div>
+
+            {/* Social Links */}
+            <div>
+              <h4 className="text-lg font-semibold text-white mb-3">Síguenos</h4>
+              <div className="flex items-center gap-3">
+                {socialLinks.map((s, i) => (
+                  <motion.a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Abrir ${s.label} en nueva pestaña`}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={inView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ delay: 0.8 + i * 0.05, duration: 0.4 }}
+                    className="w-10 h-10 flex items-center justify-center rounded-full bg-dark-700 hover:bg-dark-600 border border-dark-600 hover:border-primary-500/30"
+                  >
+                    <s.icon className="w-5 h-5 text-white" />
+                  </motion.a>
+                ))}
+              </div>
             </div>
 
 

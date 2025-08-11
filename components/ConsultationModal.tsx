@@ -171,12 +171,31 @@ const ConsultationModal = ({ isOpen, onClose }: ConsultationModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
+      let token: string | undefined
+      // Obtener token de reCAPTCHA v3 si está disponible (mismo patrón que Contact.tsx)
+      // @ts-ignore
+      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+      const isProd = process.env.NODE_ENV === 'production'
+      // @ts-ignore
+      const gre = typeof window !== 'undefined' ? window.grecaptcha : undefined
+      if (gre && siteKey && isProd) {
+        token = await new Promise<string | undefined>((resolve) => {
+          // @ts-ignore
+          gre.ready(() => {
+            // @ts-ignore
+            gre.execute(siteKey, { action: 'consultation' })
+              .then((t: string) => resolve(t))
+              .catch(() => resolve(undefined))
+          })
+        })
+      }
       const res = await fetch('/api/consultation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           selectedService,
           ...formData,
+          token,
         }),
       })
       const data = await res.json()

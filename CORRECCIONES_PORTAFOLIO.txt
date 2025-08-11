@@ -1,54 +1,176 @@
-Auditoría actualizada – Angelware Labs Portfolio
+Auditoría y Plan – Angelware Labs Portfolio
 
-Completado
-- Fuentes unificadas (next/font); @import removidos.
-- Modales por viewport + ARIA básica.
-- Loading ≤ ~900ms con prefers-reduced-motion.
-- Contacto vía SMTP (Gmail): email a propietario + confirmación a usuario; validación backend.
-- Prefers-reduced-motion (Hero/Particles/Testimonials); Particles optimizado y sin overflow.
-- Bloqueo scroll horizontal en móvil.
-- SEO base: metadataBase, themeColor, og/twitter image, sitemap/robots postbuild.
-- Favicon; enlaces sociales actualizados; sección “Marcas” con carrusel infinito.
-- TS target es2020/lib esnext; microinteracciones sobrias; paleta atenuada.
+====================
+Realizado (100% implementado)
+====================
+- Diseño/Frontend
+  - Fuentes con next/font; limpieza de @import.
+  - Tema oscuro minimalista; microinteracciones sobrias; paleta consistente.
+  - Bloqueo de scroll horizontal en móvil; contenedores con overflow protegidos.
+  - Partículas optimizadas: render condicional por viewport y prefers-reduced-motion.
+  - Secciones en vista única (`app/page.tsx`): Servicios, Marcas, Portafolio, Casos, Proceso, Precios, FAQ, Sobre Nosotros, Testimonios, Contacto, Footer.
 
-Backlog P0–P3
-P0 – Crítico
-1) Focus trap y retorno de foco en modales (Service/Mobile) + aria-hidden al fondo.
-2) Contacto: rate limit + reCAPTCHA + aria-live para mensajes.
-3) Formularios accesibles: id/htmlFor, aria-invalid, descripción de errores.
+- Accesibilidad/UX
+  - Modales de Servicios (desktop y mobile) con focus trap, retorno de foco y `aria-hidden` al fondo.
+  - Contacto accesible: `id/htmlFor`, `aria-live` para mensajes, `aria-invalid`/`aria-describedby` en errores; enlaces sociales reales y aria-labels.
+  - Cierre con Escape en modales; bloqueo de scroll al abrir.
 
-P1 – Alto
-4) JSON‑LD (Organization/WebSite/Service) sin warnings.
-5) Extraer data a `/data/*.ts` (services/projects/clients) con tipos.
-6) Carga condicional de Particles (desactivar en móvil por defecto).
-7) Analytics (Plausible o GA4) con consentimiento.
+- Formularios/Backend
+  - API Contacto (`POST /api/contact`) con validación, rate limit en memoria, reCAPTCHA v3 en producción, SMTP nodemailer (propietario + confirmación usuario).
+  - API Consulta (`POST /api/consultation`) con validación, rate limit en memoria, reCAPTCHA y SMTP dual.
+  - Integración de reCAPTCHA v3 en cliente (Contact y Consultation) condicionada a producción.
 
-P2 – Medio
-8) Casos de Estudio (2–3) con KPI y CTA.
-9) Precios/Planes + FAQ (rutas dedicadas).
-10) Proceso paso a paso + FAQ como componentes reutilizables.
-11) Social en Contact con URLs reales y aria-labels.
+- Datos/Contenido
+  - Data tipada centralizada: `data/services.ts`, `data/projects.ts`, `data/clients.ts`, `data/caseStudies.ts`.
+  - Componentes consumen data tipada: `Services`, `Portfolio`, `ClientLogos`, `CaseStudies`.
 
-P3 – Bajo
-12) PWA/manifest + apple-touch-icon + maskable 512.
-13) 404/500 personalizados + skeletons de carga.
-14) README con entorno, SMTP y despliegue.
+- SEO/Metadatos
+  - `metadataBase`, `themeColor`, OpenGraph/Twitter images.
+  - `next-sitemap` + `robots` postbuild.
+  - JSON‑LD: Organization y WebSite con `@id` enlazado; Services con `@id`/`url` y sin warnings.
 
-Checklist por archivo
-- [ ] components/ServiceModal.tsx / MobileModal.tsx → focus trap, return focus, aria-hidden fondo.
-- [ ] app/api/contact/route.ts → rate limit + reCAPTCHA server.
-- [ ] components/Contact.tsx → ids/labels, aria-live, enlaces sociales reales.
-- [ ] app/layout.tsx → JSON‑LD Organization/WebSite; Services JSON‑LD.
-- [ ] /data/services.ts /data/projects.ts /data/clients.ts → tipados; actualizar componentes.
-- [ ] app/layout.tsx → dynamic import de Particles por viewport/preferencias.
-- [ ] app/layout.tsx → script analytics + consentimiento.
-- [ ] app/casos/page.tsx, app/precios/page.tsx → nuevas vistas; components/Process.tsx, components/FAQ.tsx.
-- [ ] public/icons/* y manifest.json → PWA.
-- [ ] app/not-found.tsx / app/error.tsx → páginas de error.
-- [ ] README.md → documentación actualizada.
+- Analítica/Privacidad
+  - Banner de consentimiento (`components/AnalyticsConsent`) con carga condicional de Plausible o GA4 (variables de entorno).
 
-Sugerencias de vistas
-- Casos de Estudio (app/casos)
-- Precios/Planes (app/precios)
-- Proceso y FAQ (componentes)
-- Políticas (app/politica-privacidad, app/terminos)
+- Limpieza/Arquitectura
+  - Eliminadas rutas duplicadas (`/casos`, `/precios`) para mantener single-page.
+
+
+====================
+Backlog único (pendiente)
+====================
+
+Prioridad Alta – Consistencia, Fluidez y Accesibilidad
+- Navegación y foco
+  - [ ] Agregar skip-link “Saltar al contenido principal” (visible al foco).
+  - [ ] `nav` con `aria-label` y `aria-current` en sección activa; landmarks claros (header/main/footer).
+  - [ ] Ajustar `scroll-margin-top` en secciones para compensar header sticky.
+
+- Estados y estilos
+  - [ ] Unificar escala de espaciados y jerarquía tipográfica (h2/h3); estilos de botones/links y focus visible consistentes.
+
+- Rendimiento/Fluidez
+  - [ ] Auditoría Lighthouse (LCP/CLS/TBT); acciones: lazy de bloques pesados, priorizar solo Hero, reducir trabajo en main thread.
+  - [ ] Particles: throttling/adaptive FPS y pausa automática en pestaña oculta o CPU baja.
+
+- Carruseles y modales
+  - [ ] Testimonials: `role="region"`, `aria-roledescription="carrusel"`, `aria-live="polite"`; controles Play/Pausa y flechas teclado; `aria-current` en dots.
+  - [ ] ConsultationModal: aplicar focus trap/retorno de foco y `aria-hidden` al fondo como en Service/Mobile.
+
+Prioridad Media – Contenido, Interactividad y Adaptabilidad
+- Contenido/Copy
+  - [ ] Revisar copy y CTAs orientados a valor; microcopy “Respuesta <24h” en CTAs de contacto/consulta.
+  - [ ] Social proof: badges de partners/certificaciones; alt descriptivo en logos.
+
+- Interactividad
+  - [ ] Microinteracciones en cards (hover/press) y feedback (loading/success) coherente en todo el sitio.
+  - [ ] Tooltips discretos en iconos de tecnologías y badges.
+  - [ ] Portfolio filtros: grupo accesible (radiogroup o `aria-pressed`) y estados anunciables.
+  - [ ] “Ver Proyecto” como enlace real a `liveUrl` (nueva pestaña, `rel="noopener"`) con nombre accesible.
+
+- Imágenes/Responsive
+  - [ ] Añadir `sizes` adecuados a `next/image` en grids para mejorar LCP; validar formatos y dimensiones.
+  - [ ] Ajustar grids (Services, Portfolio, CaseStudies) por breakpoint: alturas, truncado y spacing.
+  - [ ] Modales: `max-height`, scroll interno suave, safe-area iOS (`env(safe-area-inset-*)`).
+
+- Medición
+  - [ ] Instrumentar eventos: clics en CTAs, apertura de modales, envíos de formularios, cambios de filtro.
+
+Prioridad Baja – Infraestructura, SEO y PWA
+- Páginas y políticas
+  - [ ] Implementar páginas simples: Política de Privacidad, Términos y Cookies (enlaces del Footer).
+  - [ ] Páginas de error: `app/not-found.tsx` y `app/error.tsx` con estilo consistente.
+
+- PWA/Assets
+  - [ ] `public/manifest.webmanifest` completo + `apple-touch-icon` + iconos `maskable-512` y variantes.
+  - [ ] (Opcional) Service Worker con `next-pwa` para offline básico.
+
+- Backend/Seguridad
+  - [ ] Unificar util de rate limit en `/api/contact` y `/api/consultation` (centralizar y reutilizar).
+  - [ ] Sanitizar `message` y limitar longitud/caracteres; honeypot/invisible field en Contact y Consultation.
+  - [ ] (Opcional) Subida de archivos segura para Consultation con storage y validaciones.
+
+- Internacionalización
+  - [ ] Preparar i18n (es/en) con diccionarios ligeros y detección por navegador.
+
+- Documentación y pruebas
+  - [ ] Actualizar README: entorno (.env), SMTP/reCAPTCHA/Analytics, comandos de build/deploy, troubleshooting.
+  - [ ] (Opcional) Pruebas e2e básicas (Playwright) para Contact/Consultation y navegación por secciones.
+
+
+Notas de implementación
+- Mantener el tema oscuro minimalista; evitar exceso de efectos visuales.
+- Priorizar accesibilidad (teclado, lectores de pantalla, contraste) en cada cambio.
+
+====================
+Interacciones por sección (Backlog detallado)
+====================
+
+- Header
+  - [ ] Resaltar ítem activo en navegación según sección visible (IntersectionObserver) y `aria-current="page"`.
+  - [ ] Scroll suave con historial (pushState) y foco al heading de la sección destino.
+  - [ ] Botón flotante “Volver arriba” que aparezca tras 600px de scroll.
+
+- Hero
+  - [ ] CTA primaria “Ver proyectos” con microestado: al hacer clic, resalta el primer card en `Portfolio` durante 2s.
+  - [ ] CTA secundaria “Iniciar Proyecto”: abre `Contact` con foco en nombre; scroll y enfoque accesible.
+  - [ ] Opción “Ver reel/demo” (modal ligero) opcional con video embebido y controles accesibles.
+
+- Services
+  - [ ] Hover en cards: mostrar 2–3 bullets extra breves; en móvil, al tocar, alternar expansión.
+  - [ ] Teclado: navegación por cards con flechas izquierda/derecha y Enter para abrir modal.
+  - [ ] Botón “Comparar servicios” (opcional): tabla rápida comparativa en modal.
+
+- Service/Mobile Modal
+  - [ ] CTA “Solicitar Cotización” que precargue servicio seleccionado en `ConsultationModal`.
+  - [ ] Atajos teclado: Esc para cerrar; Tab loop; Shift+Tab correcto; foco vuelve al trigger.
+
+- Portfolio
+  - [ ] Mantener filtro seleccionado en `sessionStorage` y restaurarlo al volver.
+  - [ ] “Cargar más” (opcional) o paginación suave si la grid crece.
+  - [ ] Modal de proyecto (opcional) con galería y links; cerrar con Esc/overlay.
+
+- Case Studies
+  - [ ] Deep-link `#caso/<id>` y navegación con prev/next dentro de la sección.
+  - [ ] Expand/Collapse de “Solución” para no saturar en móvil.
+  - [ ] CTA “Agendar Consulta” con `aria-label` incluyendo nombre del caso; dispara modal con estado.
+
+- Process
+  - [ ] Mostrar detalles bajo cada paso al hacer hover/click; colapsables en móvil.
+  - [ ] Indicador de progreso al hacer scroll (barra o breadcrumbs de pasos).
+
+- Pricing
+  - [ ] Toggle mensual/anual (cuando aplique) con animación suave.
+  - [ ] Tabla de comparación (opcional) con sticky first-col en desktop.
+  - [ ] CTA de cada plan abre `ConsultationModal` con plan sugerido.
+
+- Testimonials
+  - [ ] Auto‑play con botón Play/Pausa; pausar en hover/focus; flechas teclado navegables.
+  - [ ] Dot indicators con `aria-current` y nombre del testimonio en `aria-label`.
+  - [ ] (Opcional) “Escribir testimonio” → abre `Contact` con asunto prellenado.
+
+- Client Logos
+  - [ ] Tooltip con nombre de marca; pausa de marquee en hover/focus; velocidad reducida en móvil.
+  - [ ] (Opcional) Click en logo navega a `Case Studies` filtrado por esa industria.
+
+- About
+  - [ ] Contadores animados solo una vez por viewport; valores accesibles en `<dl>`.
+  - [ ] CTA “Conoce nuestro equipo” abre `TeamPage` con foco inicial y cierre accesible.
+
+- Contact (UI)
+  - [ ] Mask de teléfono por país (opcional) y validación en cliente.
+  - [ ] Guardar borrador local (localStorage) y restaurar si el usuario vuelve.
+  - [ ] Mensajes de estado inline (éxito/error) sin usar alert; boton deshabilitado durante envío.
+
+- Contact/Consultation (API)
+  - [ ] Honeypot/invisible field anti‑bots y verificación en servidor.
+  - [ ] Sanitización HTML/URLs en `message`; límites de longitud; normalizar whitespace.
+
+- Footer
+  - [ ] Enlaces “Política”, “Términos”, “Cookies” funcionales (páginas simples) y botón “Preferencias de cookies”.
+  - [ ] Enlace “Volver arriba” que lleve el foco a `main`.
+
+- Navegación interna
+  - [ ] `NavigationManager`: anunciar apertura de vistas internas con `role="dialog"/"region"`; cierre con Esc.
+  - [ ] Compensar header sticky en anclajes (scroll-margin-top consistente en todas las secciones).
+

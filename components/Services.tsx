@@ -100,7 +100,7 @@ const Services = () => {
   return (
     <section id="services" className="section-padding gradient-bg overflow-x-hidden">
       <div className="container-custom">
-        {/* JSON-LD de servicios para rich results */}
+        {/* JSON-LD de servicios para rich results (sin warnings de precio) */}
         <script
           type="application/ld+json"
           suppressHydrationWarning
@@ -109,23 +109,16 @@ const Services = () => {
               '@context': 'https://schema.org',
               '@graph': services.map((s) => ({
                 '@type': 'Service',
+                '@id': `https://angelwarelabs.com/#service-${s.id}`,
                 name: s.title,
                 description: s.description,
+                url: `https://angelwarelabs.com/#servicios/${s.id}`,
                 provider: {
                   '@type': 'Organization',
-                  name: 'Angelware Labs',
-                  url: 'https://angelwarelabs.com',
+                  '@id': 'https://angelwarelabs.com/#organization',
                 },
                 areaServed: 'Worldwide',
                 serviceType: s.title,
-                offers: {
-                  '@type': 'Offer',
-                  availability: 'https://schema.org/InStock',
-                  priceSpecification: {
-                    '@type': 'PriceSpecification',
-                    priceCurrency: 'USD',
-                  },
-                },
               })),
             }),
           }}

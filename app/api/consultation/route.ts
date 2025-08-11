@@ -8,7 +8,7 @@ function isValidEmail(email: string) {
 
 export async function POST(request: Request) {
   try {
-    // Rate limit simple en memoria (para prod usar KV/Redis)
+    // Rate limit básico en memoria (para producción usar Redis/KV)
     const ip = request.headers.get('x-forwarded-for') || 'unknown'
     // @ts-ignore
     globalThis.__rl_consult = globalThis.__rl_consult || new Map()
@@ -30,7 +30,17 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { name, email, phone, company, message, budget, timeline, selectedService } = body || {}
+    const {
+      selectedService,
+      name,
+      email,
+      phone,
+      company,
+      message,
+      budget,
+      timeline,
+      token,
+    } = body || {}
 
     if (!name || !email || !message) {
       return NextResponse.json({ ok: false, error: 'Faltan campos requeridos.' }, { status: 400 })
@@ -39,6 +49,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false, error: 'Email inválido.' }, { status: 400 })
     }
 
+    // reCAPTCHA v3 (opcional en producción si hay clave)
+    const secret = process.env.RECAPTCHA_SECRET_KEY
+    const isProd = process.env.NODE_ENV === 'production'
+    if (secret && isProd) {
+      if (!token) return NextResponse.json({ ok: false, error: 'Captcha faltante.' }, { status: 400 })
+      const verify = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ secret, response: token }),
+      })
+      const result = await verify.json()
+      if (!result.success || (typeof result.score === 'number' && result.score < 0.5)) {
+        return NextResponse.json({ ok: false, error: 'Captcha inválido.' }, { status: 400 })
+      }
+    }
+
+    // SMTP
     const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS } = process.env
     if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASS) {
       return NextResponse.json({ ok: false, error: 'SMTP no configurado' }, { status: 500 })
@@ -52,105 +79,64 @@ export async function POST(request: Request) {
     })
 
     const brandPrimary = '#0ea5e9'
-    const brandAccent = '#22d3ee'
     const brandBG = '#0f172a'
     const brandText = '#e2e8f0'
-    const brandMuted = '#94a3b8'
-    const brandName = 'Angelware Labs'
-    const brandWebsite = 'https://instagram.com/angelware.labs'
-
-    const preheaderOwner = `Nueva consulta de ${name} (${email})`
-    const preheaderUser = 'Hemos recibido tu solicitud de consulta'
-
-    const headerBlock = `
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
-        <tr>
-          <td style="padding:8px 0 16px 0">
-            <table role="presentation" cellpadding="0" cellspacing="0" align="center">
-              <tr>
-                <td style="background:linear-gradient(135deg, ${brandPrimary}, ${brandAccent});width:40px;height:40px;border-radius:10px;text-align:center;vertical-align:middle;color:#fff;font-weight:700;font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif">A</td>
-                <td style="width:12px"></td>
-                <td style="font-size:18px;font-weight:700;color:#fff;font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif">${brandName}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>`
-
-    const footerBlock = `
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;border-top:1px solid #334155">
-        <tr><td style="padding-top:12px;color:${brandMuted};font-size:12px">© ${new Date().getFullYear()} ${brandName}. Cali, Colombia • <a href="${brandWebsite}" style="color:${brandPrimary};text-decoration:none">@angelware.labs</a></td></tr>
-      </table>`
 
     const ownerHtml = `
-      <div style="display:none;max-height:0;overflow:hidden;color:transparent">${preheaderOwner}</div>
       <table width="100%" cellpadding="0" cellspacing="0" style="background:${brandBG};padding:24px;font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${brandText}">
         <tr><td>
-          ${headerBlock}
-          <h2 style="margin:0 0 8px;color:#fff">Nueva solicitud de consulta</h2>
-          <p style="margin:0 0 16px;color:${brandMuted}">Un usuario ha completado el formulario de consulta.</p>
-          <table cellpadding="0" cellspacing="0" style="width:100%;margin:0 0 12px;border:1px solid #334155;border-radius:12px;background:#111827">
-            <tr><td style="padding:16px">
-              <table cellpadding="0" cellspacing="0" style="width:100%">
-                <tr><td style="color:${brandMuted};padding-bottom:6px">Nombre</td><td style="color:${brandText}"><strong>${name}</strong></td></tr>
-                <tr><td style="color:${brandMuted};padding-bottom:6px">Email</td><td style="color:${brandText}"><strong>${email}</strong></td></tr>
-                <tr><td style="color:${brandMuted};padding-bottom:6px">Teléfono</td><td style="color:${brandText}">${phone || '-'}</td></tr>
-                <tr><td style="color:${brandMuted};padding-bottom:6px">Empresa</td><td style="color:${brandText}">${company || '-'}</td></tr>
-                <tr><td style="color:${brandMuted};padding-bottom:6px">Servicio</td><td style="color:${brandText}">${selectedService || '-'}</td></tr>
-                <tr><td style="color:${brandMuted};padding-bottom:6px">Presupuesto</td><td style="color:${brandText}">${budget || '-'}</td></tr>
-                <tr><td style="color:${brandMuted};padding-bottom:6px">Timeline</td><td style="color:${brandText}">${timeline || '-'}</td></tr>
-              </table>
-              <div style="margin-top:12px;padding-top:12px;border-top:1px dashed #334155">
-                <p style="margin:0 0 6px;color:${brandMuted}">Mensaje</p>
-                <p style="white-space:pre-wrap;margin:0;color:${brandText}">${message}</p>
-              </div>
-            </td></tr>
-          </table>
-          <p style="margin:4px 0 0;color:${brandMuted};font-size:12px">Responde a este correo para contactar al usuario.</p>
-          ${footerBlock}
+          <h2 style="margin:0 0 16px;color:#fff">Nueva solicitud de consulta</h2>
+          <p style="margin:0 0 8px">Servicio: <strong>${selectedService || '-'}</strong></p>
+          <p style="margin:0 0 8px">Nombre: <strong>${name}</strong></p>
+          <p style="margin:0 0 8px">Email: <strong>${email}</strong></p>
+          <p style="margin:0 0 8px">Teléfono: <strong>${phone || '-'}</strong></p>
+          <p style="margin:0 0 8px">Empresa: <strong>${company || '-'}</strong></p>
+          <p style="margin:0 0 8px">Presupuesto: <strong>${budget || '-'}</strong></p>
+          <p style="margin:0 0 8px">Timeline: <strong>${timeline || '-'}</strong></p>
+          <div style="margin:16px 0;padding:16px;border:1px solid #334155;border-radius:12px;background:#111827">
+            <p style="margin:0 0 8px;color:#94a3b8">Mensaje:</p>
+            <p style="white-space:pre-wrap;margin:0;color:#cbd5e1">${message}</p>
+          </div>
         </td></tr>
       </table>
     `
 
     const userHtml = `
-      <div style="display:none;max-height:0;overflow:hidden;color:transparent">${preheaderUser}</div>
       <table width="100%" cellpadding="0" cellspacing="0" style="background:${brandBG};padding:24px;font-family:Inter,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${brandText}">
         <tr><td>
-          ${headerBlock}
-          <h2 style="margin:0 0 6px;color:#fff">¡Gracias por solicitar una consulta, ${name}!</h2>
-          <p style="margin:0 0 16px;color:${brandMuted}">Hemos recibido tu solicitud y te contactaremos en menos de 24 horas.</p>
-          <table cellpadding="0" cellspacing="0" style="width:100%;margin:0 0 12px;border:1px solid #334155;border-radius:12px;background:#111827">
+          <h2 style="margin:0 0 12px;color:#fff">¡Gracias por tu interés, ${name}!</h2>
+          <p style="margin:0 0 12px;color:#cbd5e1">Recibimos tu solicitud de consulta y te contactaremos en menos de 24 horas.</p>
+          <table cellpadding="0" cellspacing="0" style="width:100%;margin:16px 0;border:1px solid #334155;border-radius:12px;background:#111827">
             <tr><td style="padding:16px">
-              <p style="margin:0 0 8px;color:${brandMuted}">Resumen</p>
-              <p style="margin:0;color:${brandText}">Servicio: ${selectedService || '-'}<br/>Presupuesto: ${budget || '-'}<br/>Timeline: ${timeline || '-'}</p>
+              <p style="margin:0 0 8px;color:#94a3b8">Resumen:</p>
+              <p style="margin:0;color:#cbd5e1">Servicio: ${selectedService || '-'}<br/>Nombre: ${name}<br/>Email: ${email}<br/>Teléfono: ${phone || '-'}<br/>Empresa: ${company || '-'}<br/>Presupuesto: ${budget || '-'}<br/>Timeline: ${timeline || '-'}</p>
               <div style="margin-top:12px">
-                <p style="margin:0 0 8px;color:${brandMuted}">Mensaje</p>
-                <p style="white-space:pre-wrap;margin:0;color:${brandText}">${message}</p>
+                <p style="margin:0 0 8px;color:#94a3b8">Mensaje:</p>
+                <p style="white-space:pre-wrap;margin:0;color:#cbd5e1">${message}</p>
               </div>
             </td></tr>
           </table>
-          <a href="${brandWebsite}" style="display:inline-block;margin-top:4px;padding:10px 16px;background:${brandPrimary};color:#fff;border-radius:10px;text-decoration:none">Conoce más sobre ${brandName}</a>
-          ${footerBlock}
+          <a href="https://instagram.com/angelware.labs" style="display:inline-block;margin-top:8px;padding:10px 16px;background:${brandPrimary};color:#fff;border-radius:10px;text-decoration:none">Síguenos en Instagram</a>
+          <p style="margin-top:12px;color:#64748b;font-size:12px">Angelware Labs • Cali, Colombia</p>
         </td></tr>
       </table>
     `
 
-    const ticketId = new Date().toISOString().replace(/[-:TZ.]/g, '').slice(0, 12)
     const [ownerResult, userResult] = await Promise.allSettled([
       transporter.sendMail({
         from: `Angelware Labs <${SMTP_USER}>`,
         to: 'angelwarelabs@gmail.com',
         replyTo: email,
-        subject: `[Consulta #${ticketId}] ${name}${selectedService ? ' · ' + selectedService : ''}`,
+        subject: `Nueva consulta: ${name} (${selectedService || 'sin servicio'})`,
         html: ownerHtml,
-        text: `Nombre: ${name}\nEmail: ${email}\nTeléfono: ${phone || '-'}\nEmpresa: ${company || '-'}\nServicio: ${selectedService || '-'}\nPresupuesto: ${budget || '-'}\nTimeline: ${timeline || '-'}\n\nMensaje:\n${message}`,
+        text: `Servicio: ${selectedService || '-'}\nNombre: ${name}\nEmail: ${email}\nTeléfono: ${phone || '-'}\nEmpresa: ${company || '-'}\nPresupuesto: ${budget || '-'}\nTimeline: ${timeline || '-'}\n\nMensaje:\n${message}`,
       }),
       transporter.sendMail({
         from: `Angelware Labs <${SMTP_USER}>`,
         to: email,
-        subject: `Recibimos tu consulta (#${ticketId}) - Angelware Labs`,
+        subject: 'Hemos recibido tu solicitud - Angelware Labs',
         html: userHtml,
-        text: `Hola ${name},\n\nHemos recibido tu solicitud de consulta y te contactaremos en menos de 24 horas.\n\nResumen:\n- Servicio: ${selectedService || '-'}\n- Presupuesto: ${budget || '-'}\n- Timeline: ${timeline || '-'}\n\nMensaje:\n${message}\n\nSaludos,\nEquipo de Angelware Labs`,
+        text: `Hola ${name},\n\nGracias por escribirnos. Hemos recibido tu solicitud de consulta y te contactaremos en menos de 24 horas.\n\nResumen de tu envío:\n- Servicio: ${selectedService || '-'}\n- Nombre: ${name}\n- Email: ${email}\n- Teléfono: ${phone || '-'}\n- Empresa: ${company || '-'}\n- Presupuesto: ${budget || '-'}\n- Timeline: ${timeline || '-'}\n- Mensaje: ${message}\n\nSaludos,\nEquipo de Angelware Labs`,
       }),
     ])
 

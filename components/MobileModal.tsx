@@ -14,8 +14,13 @@ const MobileModal = ({ isOpen, onClose, service }: MobileModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null)
   const lastFocusedRef = useRef<HTMLElement | null>(null)
   useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+
     if (isOpen) {
       lastFocusedRef.current = (document.activeElement as HTMLElement) || null
+      document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
       const app = document.getElementById('app-content')
       if (app) app.setAttribute('aria-hidden', 'true')
@@ -25,12 +30,13 @@ const MobileModal = ({ isOpen, onClose, service }: MobileModalProps) => {
     }
 
     return () => {
+      document.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = 'unset'
       const app = document.getElementById('app-content')
       if (app) app.removeAttribute('aria-hidden')
       lastFocusedRef.current?.focus()
     }
-  }, [isOpen])
+  }, [isOpen, onClose])
 
   if (!service) return null
 
