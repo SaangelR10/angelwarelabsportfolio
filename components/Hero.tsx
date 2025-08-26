@@ -16,7 +16,8 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="min-h-[calc(100vh-4rem)] lg:min-h-[calc(100vh-5rem)] flex items-start justify-center relative overflow-hidden pt-0"
+      data-section="hero"
+      className="min-h-[calc(100vh-4rem)] lg:min-h-[calc(100vh-5rem)] flex items-start justify-center relative overflow-hidden pt-0 dynamic-section-padding"
     >
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900" />
@@ -74,13 +75,13 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight"
+            className="text-4xl sm:text-5xl lg:text-7xl font-bold leading-tight dynamic-title-font"
           >
-            <span className="gradient-text">Transformamos</span>
+            <span className="gradient-text dynamic-title">Transformamos</span>
             <br />
-            <span className="text-white">Ideas en</span>
+            <span className="text-white dynamic-title">Ideas en</span>
             <br />
-            <span className="gradient-text">Experiencias Digitales</span>
+            <span className="gradient-text dynamic-title">Experiencias Digitales</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -88,7 +89,7 @@ const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-lg sm:text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
+            className="text-lg sm:text-xl lg:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed dynamic-subtitle-font dynamic-subtitle"
           >
             Somos expertos en desarrollo web, aplicaciones móviles y soluciones tecnológicas 
             que impulsan el crecimiento de tu negocio con tecnología de última generación.
@@ -105,7 +106,7 @@ const Hero = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection('portfolio')}
-              className="button-primary flex items-center space-x-2"
+              className="button-primary dynamic-button dynamic-border-radius flex items-center space-x-2"
             >
               <span>Ver Nuestros Proyectos</span>
               <ArrowRight className="w-5 h-5" />
@@ -115,7 +116,7 @@ const Hero = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => scrollToSection('contact')}
-              className="button-secondary flex items-center space-x-2"
+              className="button-secondary dynamic-button dynamic-border-radius flex items-center space-x-2"
             >
               <Play className="w-5 h-5" />
               <span>Iniciar Proyecto</span>

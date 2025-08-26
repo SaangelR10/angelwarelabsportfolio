@@ -59,7 +59,7 @@ const Header = () => {
     <motion.header
       initial={false}
       animate={{ y: 0 }}
-      className={`sticky top-0 left-0 right-0 z-[9999] ${isMounted ? 'transition-all duration-300' : ''} overflow-x-hidden ${
+      className={`sticky top-0 left-0 right-0 z-[9999] ${isMounted ? 'transition-all duration-300' : ''} overflow-x-hidden dynamic-navbar ${
         isScrolled
           ? 'bg-dark-900/95 backdrop-blur-md border-b border-dark-700'
           : 'bg-transparent'

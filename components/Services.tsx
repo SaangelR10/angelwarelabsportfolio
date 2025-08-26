@@ -98,7 +98,7 @@ const Services = () => {
   }, [services])
 
   return (
-    <section id="services" className="section-padding gradient-bg overflow-x-hidden">
+    <section id="services" data-section="services" className="section-padding gradient-bg overflow-x-hidden dynamic-section-padding">
       <div className="container-custom">
         {/* JSON-LD de servicios para rich results (sin warnings de precio) */}
         <script
@@ -132,10 +132,10 @@ const Services = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-            Nuestros <span className="gradient-text">Servicios</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 dynamic-title-font">
+            Nuestros <span className="gradient-text dynamic-title">Servicios</span>
           </h2>
-          <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto dynamic-subtitle-font dynamic-subtitle">
             Ofrecemos soluciones tecnológicas integrales que impulsan el crecimiento 
             de tu negocio con tecnología de vanguardia y diseño excepcional.
           </p>
@@ -165,11 +165,11 @@ const Services = () => {
               </div>
 
               {/* Content */}
-              <h3 className="text-xl font-bold text-white mb-4 group-hover:text-primary-400 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-white mb-4 group-hover:text-primary-400 transition-colors duration-300 dynamic-subtitle-font dynamic-subtitle">
                 {service.title}
               </h3>
               
-              <p className="text-gray-400 mb-6 leading-relaxed">
+              <p className="text-gray-400 mb-6 leading-relaxed dynamic-body-font dynamic-body">
                 {service.description}
               </p>
 
@@ -178,7 +178,7 @@ const Services = () => {
                 {service.features.map((feature) => (
                   <div key={feature} className="flex items-center space-x-3">
                     <CheckCircle className="w-5 h-5 text-primary-400 flex-shrink-0" />
-                    <span className="text-sm text-gray-300">{feature}</span>
+                    <span className="text-sm text-gray-300 dynamic-body-font dynamic-body">{feature}</span>
                   </div>
                 ))}
               </div>

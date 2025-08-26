@@ -6,6 +6,9 @@ import ParticlesGate from '@/components/ParticlesGate'
 import GlobalConsultation from '@/components/GlobalConsultation'
 import LoadingScreen from '@/components/LoadingScreen'
 import AnalyticsConsent from '@/components/AnalyticsConsent'
+import CustomizationTrigger from '@/components/CustomizationTrigger'
+import FontUpdater from '@/components/FontUpdater'
+import { ThemeProvider } from '@/contexts/ThemeContext'
 
 const inter = Inter({ subsets: ['latin'] })
 const jetbrainsMono = JetBrainsMono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
@@ -63,15 +66,20 @@ export default function RootLayout({
             strategy="afterInteractive"
           />
         )}
-        <LoadingScreen />
-        <div className="fixed inset-0 overflow-hidden">
-          <ParticlesGate />
-        </div>
-        <div id="app-content" className="relative z-10">
-          {children}
-        </div>
-        <GlobalConsultation />
-        <AnalyticsConsent />
+        <ThemeProvider>
+          <LoadingScreen />
+          <div className="fixed inset-0 overflow-hidden">
+            <ParticlesGate />
+          </div>
+          <div id="background-video-container" className="fixed inset-0 z-0" />
+          <div id="app-content" className="relative z-10">
+            {children}
+          </div>
+          <GlobalConsultation />
+          <AnalyticsConsent />
+          <CustomizationTrigger />
+          <FontUpdater />
+        </ThemeProvider>
         {/* JSON-LD Organization y WebSite */}
         <script
           type="application/ld+json"

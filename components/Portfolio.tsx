@@ -56,7 +56,7 @@ const Portfolio = () => {
   }
 
   return (
-    <section id="portfolio" className="section-padding gradient-bg overflow-x-hidden">
+    <section id="portfolio" data-section="portfolio" className="section-padding gradient-bg overflow-x-hidden dynamic-section-padding">
       <div className="container-custom">
         {/* Section Header */}
         <motion.div
@@ -67,10 +67,10 @@ const Portfolio = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-            Nuestro <span className="gradient-text">Portafolio</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 dynamic-title-font">
+            Nuestro <span className="gradient-text dynamic-title">Portafolio</span>
           </h2>
-          <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto dynamic-subtitle-font dynamic-subtitle">
             Descubre algunos de nuestros proyectos más destacados que demuestran 
             nuestra experiencia y creatividad en el desarrollo tecnológico.
           </p>
@@ -163,11 +163,11 @@ const Portfolio = () => {
 
                 {/* Project Content */}
                 <div className="p-6">
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors duration-300">
+                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-primary-400 transition-colors duration-300 dynamic-subtitle-font dynamic-subtitle">
                     {project.title}
                   </h3>
                   
-                  <p className="text-gray-400 mb-4 leading-relaxed">
+                  <p className="text-gray-400 mb-4 leading-relaxed dynamic-body-font dynamic-body">
                     {project.description}
                   </p>
 
@@ -176,7 +176,7 @@ const Portfolio = () => {
                     {project.technologies.map((tech) => (
                       <span
                         key={tech}
-                        className="px-3 py-1 bg-dark-700 text-primary-400 text-xs rounded-full"
+                        className="px-3 py-1 bg-dark-700 text-primary-400 text-xs rounded-full dynamic-body-font dynamic-body"
                       >
                         {tech}
                       </span>
@@ -190,7 +190,7 @@ const Portfolio = () => {
                     className="flex items-center space-x-2 text-primary-400 hover:text-primary-300 transition-colors duration-300 group-hover:translate-x-2 transition-transform duration-300"
                   >
                     <Eye className="w-4 h-4" />
-                    <span className="text-sm font-medium">Ver Proyecto</span>
+                    <span className="text-sm font-medium dynamic-body-font dynamic-body">Ver Proyecto</span>
                   </motion.button>
                   <div className="mt-3">
                     <button
